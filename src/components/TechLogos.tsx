@@ -1,75 +1,63 @@
 "use client";
-import React, { useEffect } from "react";
-import Image from "next/image";
-import { motion, useAnimation } from "framer-motion";
-
-// Define technology logos
-const techLogos = [
-  { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg", alt: "HTML5" },
-  { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg", alt: "CSS3" },
-  { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg", alt: "JavaScript" },
-  { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg", alt: "TypeScript" },
-  { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg", alt: "React" },
-  { 
-    src: "https://upload.wikimedia.org/wikipedia/commons/8/8e/Nextjs-logo.svg", 
-    alt: "Next.js",
-    isNextJS: true, // Special flag for Next.js logo size
-  },
-  { src: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg", alt: "Tailwind CSS" },
-];
+import React from 'react';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { techLogos } from '@/data/techLogos';
 
 const TechLogos: React.FC = () => {
-  const controls = useAnimation();
-  const scrollingLogos = [...techLogos, ...techLogos, ...techLogos];
-
-  useEffect(() => {
-    controls.start({
-      x: "-50%",
-      transition: {
-        ease: "linear",
-        duration: 16,
-        repeat: Infinity,
-      },
-    });
-  }, [controls]);
+  // Duplicate the logos array to create a seamless loop
+  const duplicatedLogos = [...techLogos, ...techLogos];
 
   return (
-    <div className="relative w-full bg-gray-800 py-4 sm:py-6 overflow-hidden flex items-center">
-      <div className="w-11/12 lg:w-4/5 mx-auto overflow-hidden relative">
-        <motion.div
-          className="flex gap-6 sm:gap-8 md:gap-12"
-          animate={controls}
-          onMouseEnter={() => controls.stop()}
-          onMouseLeave={() =>
-            controls.start({
-              x: "-50%",
-              transition: {
-                ease: "linear",
-                duration: 16,
-                repeat: Infinity,
-              },
-            })
-          }
-        >
-          {scrollingLogos.map((brand, index) => (
-            <div 
-              key={index} 
-              className={`flex items-center justify-center ${
-                brand.isNextJS 
-                  ? "min-w-[100px] sm:min-w-[130px] md:min-w-[160px]"  // Adjusted Next.js logo size
-                  : "min-w-[70px] sm:min-w-[90px] md:min-w-[110px]"
-              }`}
+    <div className="py-12 bg-gradient-to-r from-slate-50 via-white to-slate-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-2xl font-semibold text-center text-gray-800 dark:text-white mb-8">
+          Technologies We Work With
+        </h2>
+        
+        <div className="relative">
+          {/* Add a gradient overlay on the left */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-r from-slate-50 to-transparent dark:from-gray-900"></div>
+          
+          {/* Add a gradient overlay on the right */}
+          <div className="absolute right-0 top-0 bottom-0 w-16 z-10 bg-gradient-to-l from-slate-50 to-transparent dark:from-gray-900"></div>
+          
+          {/* Scrolling container */}
+          <div className="flex overflow-hidden">
+            <motion.div
+              className="flex items-center space-x-12 py-6"
+              animate={{ x: [0, -50 * techLogos.length] }}
+              transition={{
+                x: {
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  duration: 30,
+                  ease: "linear"
+                }
+              }}
             >
-              <Image
-                src={brand.src}
-                alt={brand.alt}
-                width={brand.isNextJS ? 90 : 65}  // Adjusted image sizes for mobile
-                height={brand.isNextJS ? 95 : 67}
-                className="object-contain"
-              />
-            </div>
-          ))}
-        </motion.div>
+              {duplicatedLogos.map((logo, index) => (
+                <div 
+                  key={`${logo.alt}-${index}`} 
+                  className="flex flex-col items-center justify-center space-y-2 w-24 h-24"
+                >
+                  <div className="relative w-16 h-16 flex-shrink-0">
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      fill
+                      priority={logo.priority}
+                      className={`object-contain filter grayscale hover:grayscale-0 transition-all duration-300 ${logo.isNextJS ? 'dark:invert' : ''}`}
+                    />
+                  </div>
+                  <span className="text-xs text-gray-600 dark:text-gray-400 font-medium text-center">
+                    {logo.alt}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
       </div>
     </div>
   );

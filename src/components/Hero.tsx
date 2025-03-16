@@ -2,7 +2,9 @@
 import React from "react";
 import Image from "next/image";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
-import { FaArrowRight } from "react-icons/fa";
+import { FaArrowRight, FaGithub } from "react-icons/fa";
+import { motion } from "framer-motion";
+import Link from "next/link";
 
 // Typewriter component for coding technologies
 const TechTypewriter: React.FC = () => {
@@ -15,9 +17,9 @@ const TechTypewriter: React.FC = () => {
   });
 
   return (
-    <span className="text-blue-400 font-bold"> {/* Typewriter Text Color */}
+    <span className="text-primary font-bold">
       {tech}
-      <Cursor cursorColor="#fff" />
+      <Cursor cursorColor="#6366f1" />
     </span>
   );
 };
@@ -33,56 +35,104 @@ const DBTypewriter: React.FC = () => {
   });
 
   return (
-    <span className="text-blue-400 font-bold"> {/* Typewriter Text Color */}
+    <span className="text-primary font-bold">
       {db}
-      <Cursor cursorColor="#ffff" />
+      <Cursor cursorColor="#6366f1" />
     </span>
   );
 };
 
 const Hero: React.FC = () => {
   return (
-    <main className="w-full min-h-screen flex flex-col items-center justify-center px-6 md:px-16 bg-gray-900 text-white mt-10 md:mt-16  ">
-      <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        {/* Left Section */}
-        <div className="space-y-6">
-          <h1 className="text-4xl md:text-5xl font-bold">
-            Welcome to <span className="text-blue-500">MYousuf-Codes</span>
+    <section className="w-full min-h-screen py-32 px-4 max-w-6xl mx-auto">
+
+      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center relative z-10">
+        {/* Left Section - Content */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="space-y-6 text-center lg:text-left"
+        >
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900">
+            Welcome to{" "}
+            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              MYousaf-Codes
+            </span>
           </h1>
-          <h2 className="text-2xl text-gray-300">
+
+          <h2 className="text-xl sm:text-2xl text-slate-700">
             I specialize in <TechTypewriter />
           </h2>
-          <h2 className="text-2xl text-gray-300">
+
+          <h2 className="text-xl sm:text-2xl text-slate-700">
             I use database systems including <DBTypewriter />
           </h2>
-          <p className="text-lg text-gray-400">
-            I am a Full Stack Developer specializing in Next.js, API Development, and modern web technologies.
+
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0">
+            I am a Full Stack Developer specializing in Next.js, API Development, and modern web technologies. Building elegant solutions to complex problems.
           </p>
 
           {/* Buttons */}
-          <div className="flex flex-wrap gap-4">
-            <button className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-md flex items-center gap-2 transition">
-              Get in Touch <FaArrowRight />
-            </button>
-            <button className="px-6 py-3 border border-gray-500 hover:bg-gray-800 text-white rounded-md transition">
-              Explore Blogs
-            </button>
-          </div>
-        </div>
+          <div className="flex flex-wrap gap-4 justify-center lg:justify-start mt-8">
+            <Link href="/contact">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg flex items-center gap-2 transition-all duration-300 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30 font-medium"
+              >
+                Get in Touch <FaArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" />
+              </motion.button>
+            </Link>
 
-        {/* Right Section (Hidden on Mobile) */}
-        <div className="hidden md:flex justify-center">
-          <Image
-            src="/images/profile.png"
-            alt="Muhammad Yousuf"
-            width={400}
-            height={400}
-            className="rounded-lg shadow-lg"
-            priority
-          />
-        </div>
+            <Link href="/blog">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="px-6 py-3 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg font-medium"
+              >
+                Explore Blogs
+              </motion.button>
+            </Link>
+
+            <Link href="https://github.com/myousuf-codes" target="_blank" rel="noopener noreferrer">
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg flex items-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg font-medium"
+              >
+                <FaGithub className="text-lg" /> GitHub
+              </motion.button>
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Right Section - Image (Hidden on Mobile) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          className="hidden md:flex justify-center items-center"
+        >
+          <div className="relative w-full max-w-sm mx-auto">
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl blur-xl opacity-20"></div>
+            <div className="relative bg-white p-1.5 rounded-xl shadow-lg">
+              <center>
+                <Image
+                  src="/images/profile.png"
+                  alt="Muhammad Yousuf"
+                  width={350}
+                  height={350}
+                  className="rounded-lg"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  priority
+                />
+              </center>
+            </div>
+          </div>
+        </motion.div>
       </div>
-    </main>
+    </section>
   );
 };
 

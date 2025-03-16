@@ -9,6 +9,18 @@ const nextConfig = {
         protocol: "https",
         hostname: "upload.wikimedia.org",
       },
+      {
+        protocol: "https",
+        hostname: "www.qsbsexpert.com",
+      },
+      {
+        protocol: "https",
+        hostname: "randomuser.me",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+      },
     ],
   },
 };

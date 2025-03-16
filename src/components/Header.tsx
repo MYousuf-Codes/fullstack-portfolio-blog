@@ -4,11 +4,17 @@ import Link from "next/link";
 import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
-import { Sheet, SheetTrigger, SheetContent, SheetClose, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetClose,
+  SheetTitle,
+  SheetDescription
+} from "@/components/ui/sheet";
 
 const Header: React.FC = () => {
   // Declare hooks unconditionally at the top
-  const { theme, setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState("All");
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -18,12 +24,12 @@ const Header: React.FC = () => {
     setMounted(true);
   }, []);
 
-  // Now it's safe to conditionally render since all hooks have been declared
+  // Now conditionally render as all hooks are declared
   if (!mounted) {
     return null;
   }
 
-  const mainLinks = ["Home", "Tutorials", "Blog", "News", "About", "Contact"];
+  const mainLinks = ["Home", "Tutorials", "Blog", "About", "Contact"];
   const categories = [
     "HTML",
     "CSS",
@@ -33,8 +39,6 @@ const Header: React.FC = () => {
     "React",
     "Next.js",
     "Node.js",
-    "Vue",
-    "Angular"
   ];
 
   const getLink = (item: string) => (item === "Home" ? "/" : `/${item.toLowerCase()}`);
@@ -95,26 +99,35 @@ const Header: React.FC = () => {
                 <Menu className="w-6 h-6 text-gray-900 dark:text-white" />
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="bg-white dark:bg-gray-900">
-              <SheetTitle className="sr-only">Mobile Navigation</SheetTitle>
+            <SheetContent
+              side="right"
+              className="bg-white dark:bg-gray-900"
+              aria-describedby="sheet-description"
+            >
+              <SheetTitle>Navigation Menu</SheetTitle>
+              <SheetDescription id="sheet-description">
+                Access main navigation links and website sections
+              </SheetDescription>
 
               {/* Mobile Menu */}
-              <nav aria-label="Mobile Navigation">
+              <nav aria-label="Mobile Navigation" className="mt-6">
                 <ul className="flex flex-col items-center space-y-4 py-4">
                   {mainLinks.map((item) => (
                     <li key={item}>
-                      <Link
-                        href={getLink(item)}
-                        className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
-                      >
-                        {item}
-                      </Link>
+                      <SheetClose asChild>
+                        <Link
+                          href={getLink(item)}
+                          className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                        >
+                          {item}
+                        </Link>
+                      </SheetClose>
                     </li>
                   ))}
                 </ul>
               </nav>
 
-              {/* Close Button (Only 1 X Now) */}
+              {/* Close Button */}
               <div className="absolute top-4 right-4">
                 <SheetClose asChild>
                   <button aria-label="Close mobile navigation">
@@ -135,9 +148,8 @@ const Header: React.FC = () => {
             <button
               onClick={prevPage}
               disabled={currentPage === 0}
-              className={`p-2 rounded-full ${
-                currentPage === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200 dark:hover:bg-gray-700"
-              }`}
+              className={`p-2 rounded-full ${currentPage === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                }`}
               aria-label="Previous categories"
             >
               <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
@@ -149,11 +161,10 @@ const Header: React.FC = () => {
                 <li key={category}>
                   <button
                     onClick={() => setActiveTab(category)}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition ${
-                      activeTab === category
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition ${activeTab === category
                         ? "bg-blue-600 text-white"
                         : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                    }`}
+                      }`}
                   >
                     {category}
                   </button>
@@ -165,9 +176,8 @@ const Header: React.FC = () => {
             <button
               onClick={nextPage}
               disabled={currentPage >= totalPages - 1}
-              className={`p-2 rounded-full ${
-                currentPage >= totalPages - 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200 dark:hover:bg-gray-700"
-              }`}
+              className={`p-2 rounded-full ${currentPage >= totalPages - 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                }`}
               aria-label="Next categories"
             >
               <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-300" />
