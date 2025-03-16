@@ -1,10 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaArrowLeft, FaGithub, FaLinkedin, FaTwitter, FaEnvelope } from "react-icons/fa";
+import { FaArrowLeft, FaGithub, FaLinkedin, FaTwitter, FaEnvelope, FaCalendar, FaClock, FaArrowRight } from "react-icons/fa";
 import { PortableText } from "@portabletext/react";
 import { client } from "../../../lib/sanity";
 import { urlForImage } from "../../../lib/sanityImage";
+import type { Metadata } from 'next';
+import type { PortableTextBlock } from '@portabletext/types';
 
 // Author interface
 interface Author {
@@ -15,13 +17,14 @@ interface Author {
     current: string;
   };
   image: any;
-  bio: any[];
+  bio: PortableTextBlock[];
   socialLinks?: {
     twitter?: string;
     github?: string;
     linkedin?: string;
     email?: string;
   };
+  role: string;
 }
 
 // Post interface for author's posts
@@ -34,6 +37,8 @@ interface Post {
   publishedAt: string;
   mainImage: any;
   excerpt: string;
+  readingTime?: string;
+  categories?: { title: string }[];
 }
 
 // Portable Text components
@@ -84,28 +89,30 @@ const portableTextComponents = {
 };
 
 // Generate metadata for SEO
-export async function generateMetadata({ params: { slug } }: { params: { slug: string } }) {
-  const author = await getAuthor(slug);
+export async function generateMetadata({ params: { slug } }: { params: { slug: string } }): Promise<Metadata> {
+  const data = await getAuthor(slug);
   
-  if (!author) {
+  if (!data) {
     return {
       title: 'Author Not Found',
-      description: 'The requested author could not be found.',
+      description: 'The requested author profile could not be found.',
     };
   }
+
+  const { author } = data;
   
   return {
-    title: `${author.name} | Author Profile`,
-    description: `Learn more about ${author.name}, one of our talented content creators.`,
+    title: `${author.name} - Author Profile | Expert Writer and Contributor`,
+    description: `Learn more about ${author.name}, ${author.role}. Read their articles and contributions.`,
     openGraph: {
-      title: `${author.name} | Author Profile`,
-      description: `Learn more about ${author.name}, one of our talented content creators.`,
+      title: `${author.name} - Author Profile`,
+      description: `Learn more about ${author.name}, ${author.role}. Read their articles and contributions.`,
       type: 'profile',
       images: [
         {
-          url: urlForImage(author.image).url(),
+          url: urlForImage(author.image)?.url() || '/placeholder-avatar.jpg',
           width: 800,
-          height: 600,
+          height: 800,
           alt: author.name,
         },
       ],
@@ -114,37 +121,40 @@ export async function generateMetadata({ params: { slug } }: { params: { slug: s
 }
 
 // Fetch author data from Sanity CMS
-async function getAuthor(slug: string): Promise<Author | null> {
-  const query = `*[_type == "author" && slug.current == $slug][0] {
-    _id,
-    name,
-    tagline,
-    slug,
-    image,
-    bio,
-    "socialLinks": {
-      "twitter": twitter,
-      "github": github,
-      "linkedin": linkedin,
-      "email": email
-    }
-  }`;
-  
-  return await client.fetch(query, { slug });
-}
+async function getAuthor(slug: string): Promise<{ author: Author; posts: Post[] } | null> {
+  try {
+    const author = await client.fetch(`
+      *[_type == "author" && slug.current == $slug][0]{
+        _id,
+        name,
+        slug,
+        image,
+        bio,
+        role,
+        socialLinks
+      }
+    `, { slug });
 
-// Fetch author's posts from Sanity CMS
-async function getAuthorPosts(authorId: string): Promise<Post[]> {
-  const query = `*[_type == "post" && references($authorId)] | order(publishedAt desc)[0...6] {
-    _id,
-    title,
-    slug,
-    publishedAt,
-    mainImage,
-    excerpt
-  }`;
-  
-  return await client.fetch(query, { authorId });
+    if (!author) return null;
+
+    const posts = await client.fetch(`
+      *[_type == "post" && author._ref == $authorId] | order(publishedAt desc)[0...3]{
+        _id,
+        title,
+        slug,
+        mainImage,
+        publishedAt,
+        "readingTime": round(length(pt::text(body)) / 5 / 180) + " min read",
+        "categories": categories[]->{ title },
+        "excerpt": coalesce(excerpt, array::join(string::split(pt::text(body[0...200]), "")[0..200], "") + "...")
+      }
+    `, { authorId: author._id });
+
+    return { author, posts };
+  } catch (error) {
+    console.error('Error fetching author:', error);
+    return null;
+  }
 }
 
 // Format date
@@ -157,9 +167,9 @@ function formatDate(dateString: string) {
 }
 
 export default async function AuthorPage({ params: { slug } }: { params: { slug: string } }) {
-  const author = await getAuthor(slug);
+  const data = await getAuthor(slug);
   
-  if (!author) {
+  if (!data) {
     return (
       <div className="min-h-screen pt-36 pb-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
         <div className="max-w-4xl mx-auto px-4 text-center">
@@ -177,7 +187,7 @@ export default async function AuthorPage({ params: { slug } }: { params: { slug:
     );
   }
   
-  const authorPosts = await getAuthorPosts(author._id);
+  const { author, posts } = data;
 
   return (
     <div className="min-h-screen pt-36 pb-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
@@ -216,11 +226,9 @@ export default async function AuthorPage({ params: { slug } }: { params: { slug:
                 {author.name}
               </h1>
               
-              {author.tagline && (
-                <p className="text-xl text-slate-600 dark:text-slate-400 mb-6 text-center md:text-left">
-                  {author.tagline}
-                </p>
-              )}
+              <p className="text-lg text-indigo-600 dark:text-indigo-400 mb-4 text-center md:text-left">
+                {author.role}
+              </p>
               
               {/* Social Links */}
               <div className="flex gap-4 mb-6 justify-center md:justify-start">
@@ -276,46 +284,67 @@ export default async function AuthorPage({ params: { slug } }: { params: { slug:
           </div>
         </div>
 
-        {/* Author's Posts */}
-        {authorPosts.length > 0 && (
-          <div className="mb-16">
-            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-8">
-              Articles by {author.name}
-            </h2>
-            
+        {/* Recent Posts */}
+        {posts.length > 0 && (
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+            Recent Articles by{" "}
+            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              {author.name}
+            </span>
+          </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {authorPosts.map((post) => (
-                <Link 
-                  href={`/blog/${post.slug.current}`}
+              {posts.map((post) => (
+                <Link
                   key={post._id}
+                  href={`/blog/${post.slug.current}`}
                   className="group"
                 >
-                  <div className="bg-white dark:bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group-hover:translate-y-[-5px]">
-                    <div className="relative h-48 overflow-hidden">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <div className="relative h-64 overflow-hidden">
                       <Image
-                        src={urlForImage(post.mainImage).url()}
+                        src={urlForImage(post.mainImage)?.url() || '/placeholder.jpg'}
                         alt={post.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                    </div>
-                    
-                    <div className="p-6">
-                      <div className="text-sm text-slate-500 dark:text-slate-400 mb-2">
-                        {formatDate(post.publishedAt)}
+                      <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                        {post.categories && post.categories.map((category) => (
+                          <span
+                            key={category.title}
+                            className="px-4 py-2 bg-indigo-500 text-white rounded-full text-sm font-medium"
+                          >
+                            {category.title}
+                          </span>
+                        ))}
                       </div>
-                      
-                      <h3 className="text-lg font-semibold mb-3 line-clamp-2 group-hover:text-indigo-500 transition-colors">
+                    </div>
+                    <div className="p-6">
+                      <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
+                        <div className="flex items-center gap-2">
+                          <FaCalendar className="text-indigo-500" />
+                          <span>{formatDate(post.publishedAt)}</span>
+                        </div>
+                        {post.readingTime && (
+                          <div className="flex items-center gap-2">
+                            <FaClock className="text-indigo-500" />
+                            <span>{post.readingTime}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <h3 className="text-xl font-semibold mb-3 line-clamp-2 text-gray-900 dark:text-white group-hover:text-indigo-500 transition-colors">
                         {post.title}
                       </h3>
-                      
-                      <p className="text-slate-600 dark:text-slate-300 mb-4 line-clamp-2">
+
+                      <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
                         {post.excerpt}
                       </p>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-indigo-600 font-medium">Read Article</span>
-                        <span className="text-indigo-600">→</span>
+
+                      <div className="flex items-center justify-end">
+                        <span className="inline-flex items-center gap-2 text-indigo-500 hover:text-indigo-600 font-medium transition-colors group">
+                          Read More <FaArrowRight className="text-sm group-hover:translate-x-1 transition-transform" />
+                        </span>
                       </div>
                     </div>
                   </div>

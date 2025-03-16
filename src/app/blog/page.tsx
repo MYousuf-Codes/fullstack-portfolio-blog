@@ -136,7 +136,7 @@ export default async function BlogPage() {
   const posts = await getPosts();
   const categories = ["All", ...new Set(posts.flatMap(post => post.categories.map(cat => cat.title)))];
 
-  return (
+    return (
     <div className="min-h-screen pt-36 pb-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10 overflow-hidden">

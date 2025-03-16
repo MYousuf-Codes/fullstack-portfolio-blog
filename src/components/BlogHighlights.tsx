@@ -55,7 +55,7 @@ const BlogHighlights: React.FC = () => {
             slug
           }
         }`;
-        
+
         const fetchedPosts = await client.fetch(query);
         setPosts(fetchedPosts);
         setIsLoading(false);
@@ -86,7 +86,13 @@ const BlogHighlights: React.FC = () => {
   if (isLoading) {
     return (
       <div className="py-16 px-4 max-w-6xl mx-auto">
-        <h2 className="text-6xl text-indigo-500 font-bold text-left mb-12">Blog Highlights</h2>
+        <h1 className="text-6xl md:text-5xl font-bold text-slate-900 mb-4">
+          Blog {" "}
+          <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Highlights
+          </span>
+        </h1>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {[1, 2].map((index) => (
             <div key={index} className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg animate-pulse">
@@ -106,8 +112,12 @@ const BlogHighlights: React.FC = () => {
 
   return (
     <section className="py-16 px-4 max-w-6xl mx-auto">
-      <h2 className="text-6xl text-indigo-500 font-bold text-left mb-12">Blog Highlights</h2>
-      
+      <h1 className="text-6xl md:text-7xl font-bold text-slate-900 mb-4">
+        Blog {" "}
+        <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          Highlights
+        </span>
+      </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {getPostsForCurrentPage().map((post) => (
           <motion.div
@@ -126,7 +136,7 @@ const BlogHighlights: React.FC = () => {
               />
               <div className="absolute top-4 left-4 flex flex-wrap gap-2">
                 {post.categories && post.categories.map((category) => (
-                  <span 
+                  <span
                     key={category.title}
                     className="px-4 py-2 bg-indigo-500 text-white rounded-full text-sm font-medium"
                   >
@@ -135,7 +145,7 @@ const BlogHighlights: React.FC = () => {
                 ))}
               </div>
             </div>
-            
+
             <div className="p-6">
               <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
                 <div className="flex items-center gap-2">
@@ -147,15 +157,15 @@ const BlogHighlights: React.FC = () => {
                   <span>{post.readingTime}</span>
                 </div>
               </div>
-              
+
               <h3 className="text-xl font-semibold mb-3 line-clamp-2 text-gray-900 dark:text-white hover:text-indigo-500 transition-colors">
                 {post.title}
               </h3>
-              
+
               <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
                 {post.excerpt}
               </p>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   {post.author && post.author.image && (
@@ -170,7 +180,7 @@ const BlogHighlights: React.FC = () => {
                     </Link>
                   )}
                   {post.author && (
-                    <Link 
+                    <Link
                       href={`/authors/${post.author.slug.current}`}
                       className="text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
                     >
@@ -178,8 +188,8 @@ const BlogHighlights: React.FC = () => {
                     </Link>
                   )}
                 </div>
-                
-                <Link 
+
+                <Link
                   href={`/blog/${post.slug.current}`}
                   className="inline-flex items-center gap-2 text-indigo-500 hover:text-indigo-600 font-medium transition-colors group"
                 >
@@ -198,11 +208,10 @@ const BlogHighlights: React.FC = () => {
             <button
               key={page}
               onClick={() => setCurrentPage(page)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                currentPage === page
-                  ? 'bg-indigo-500 text-white'
-                  : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600'
-              }`}
+              className={`px-4 py-2 rounded-lg transition-colors ${currentPage === page
+                ? 'bg-indigo-500 text-white'
+                : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600'
+                }`}
             >
               {page}
             </button>

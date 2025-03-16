@@ -76,7 +76,7 @@ const Testimonials: React.FC = () => {
   return (
     <section className="py-16 px-4 max-w-6xl mx-auto">
         
-      <h2 className="text-6xl text-indigo-500 font-bold text-left mb-12">Testimonials</h2>
+      <h2 className="text-6xl md:text-7xl text-indigo-500 font-bold text-left mb-12">Testimonials</h2>
       
       <div className="relative bg-white dark:bg-gray-800 rounded-xl p-8 shadow-lg overflow-hidden">
         <div className="absolute top-8 left-8 text-indigo-400 opacity-20">
