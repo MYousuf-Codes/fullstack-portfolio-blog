@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default function Tutorials() {
-    return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 pt-24 pb-24">
+  return (
+        <div className="min-h-screen pt-24 bg-gradient-to-b from-slate-100 to-slate-200">
             {/* Background Elements */}
             <div className="absolute inset-0 -z-10 overflow-hidden">
                 <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply opacity-20 blur-3xl"></div>
@@ -54,7 +54,7 @@ export default function Tutorials() {
                     <div className="bg-white dark:bg-slate-800 rounded-xl py-8 px-6 md:px-12 shadow-lg mb-12">
                         <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center justify-center gap-3">
                             <FaCode className="text-indigo-500" />
-                            What You'll Learn
+                            What You&apos;ll Learn
                         </h2>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
@@ -120,7 +120,7 @@ export default function Tutorials() {
                                     </li>
                                     <li className="flex gap-3">
                                         <span className="w-2 h-2 bg-indigo-500 rounded-full mt-2.5"></span>
-                                        <div>
+    <div>
                                             <span className="font-medium text-slate-900 dark:text-white">Python</span>
                                             <p className="text-sm text-slate-600 dark:text-slate-300">Django, Flask, data analysis with pandas, automation scripts, and web scraping techniques</p>
                                         </div>
@@ -191,13 +191,12 @@ export default function Tutorials() {
                             <h2 className="text-2xl font-bold">Coming Soon!</h2>
                         </div>
                         <p className="max-w-2xl mx-auto">
-                            We're working hard to bring you these comprehensive tutorials. Sign up for our newsletter below to be notified when new content is available.
+                            We&apos;re working hard to bring you these comprehensive tutorials. Sign up for our newsletter below to be notified when new content is available.
                         </p>
                     </div>
                 </div>
             </div>
-            {/* Newsletter Signup */}
             <NewsLetter />
-        </div>
-    );
+    </div>
+  );
 }

@@ -1,8 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import {
   Sheet,
@@ -19,6 +18,9 @@ const Header: React.FC = () => {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0); // Pagination hook
+  const [blogDropdownOpen, setBlogDropdownOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const blogDropdownRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -78,16 +80,67 @@ const Header: React.FC = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex" aria-label="Main Navigation">
           <ul className="flex space-x-6">
-            {mainLinks.map((item) => (
-              <li key={item}>
-                <Link
-                  href={getLink(item)}
-                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
-                >
-                  {item}
-                </Link>
-              </li>
-            ))}
+            {mainLinks.map((item) => {
+              if (item === "Blog") {
+                return (
+                  <li 
+                    key={item} 
+                    className="relative group" 
+                    ref={blogDropdownRef}
+                    onMouseEnter={() => setBlogDropdownOpen(true)}
+                    onMouseLeave={() => setBlogDropdownOpen(false)}
+                  >
+                    <Link
+                      href="/blog"
+                      className={`text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${
+                        pathname.startsWith("/blog") || pathname.startsWith("/authors") 
+                          ? "text-blue-600 dark:text-blue-400" 
+                          : ""
+                      }`}
+                    >
+                      {item}
+                    </Link>
+                    
+                    {/* Dropdown Menu */}
+                    <div 
+                      className={`absolute top-full left-0 mt-1 w-36 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 transition-opacity duration-200 ${
+                        blogDropdownOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                      }`}
+                    >
+                      <Link
+                        href="/blog"
+                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${
+                          pathname === "/blog" ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"
+                        }`}
+                      >
+                        Blog
+                      </Link>
+                      <Link
+                        href="/authors"
+                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${
+                          pathname === "/authors" ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"
+                        }`}
+                      >
+                        Authors
+                      </Link>
+                    </div>
+                  </li>
+                );
+              }
+              
+              return (
+                <li key={item}>
+                  <Link
+                    href={getLink(item)}
+                    className={`text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${
+                      pathname === getLink(item) ? "text-blue-600 dark:text-blue-400" : ""
+                    }`}
+                  >
+                    {item}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
@@ -112,18 +165,59 @@ const Header: React.FC = () => {
               {/* Mobile Menu */}
               <nav aria-label="Mobile Navigation" className="mt-6">
                 <ul className="flex flex-col items-center space-y-4 py-4">
-                  {mainLinks.map((item) => (
-                    <li key={item}>
-                      <SheetClose asChild>
-                        <Link
-                          href={getLink(item)}
-                          className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
-                        >
-                          {item}
-                        </Link>
-                      </SheetClose>
-                    </li>
-                  ))}
+                  {mainLinks.map((item) => {
+                    if (item === "Blog") {
+                      return (
+                        <li key={item} className="w-full flex flex-col items-center">
+                          <div className="flex flex-col items-center w-full">
+                            <button
+                              onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
+                              className="flex items-center gap-1 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                              aria-expanded={mobileDropdownOpen}
+                            >
+                              {item}
+                              <ChevronRight className={`w-4 h-4 transition-transform ${mobileDropdownOpen ? 'rotate-90' : ''}`} />
+                            </button>
+                            
+                            {/* Mobile Dropdown */}
+                            {mobileDropdownOpen && (
+                              <div className="mt-2 w-full flex flex-col items-center space-y-2 py-2 border-t border-b border-gray-200 dark:border-gray-700">
+                                <SheetClose asChild>
+                                  <Link
+                                    href="/blog"
+                                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                                  >
+                                    Blog
+                                  </Link>
+                                </SheetClose>
+                                <SheetClose asChild>
+                                  <Link
+                                    href="/authors"
+                                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                                  >
+                                    Authors
+                                  </Link>
+                                </SheetClose>
+                              </div>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    }
+                    
+                    return (
+                      <li key={item}>
+                        <SheetClose asChild>
+                          <Link
+                            href={getLink(item)}
+                            className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                          >
+                            {item}
+                          </Link>
+                        </SheetClose>
+                      </li>
+                    );
+                  })}
                 </ul>
               </nav>
 

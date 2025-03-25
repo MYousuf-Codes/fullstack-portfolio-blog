@@ -17,11 +17,11 @@ const CTA: React.FC = () => {
           className="text-center"
         >
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Let's Build Something Amazing Together
+            Let&apos;s Build Something Amazing Together
           </h2>
           
           <p className="text-lg md:text-xl max-w-3xl mx-auto mb-10 text-indigo-100">
-            Ready to bring your ideas to life? I'm currently available for freelance projects, 
+            Ready to bring your ideas to life? I&apos;m currently available for freelance projects, 
             full-time positions, and collaborative opportunities.
           </p>
           

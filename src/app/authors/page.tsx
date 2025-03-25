@@ -3,9 +3,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { client } from '@/sanity/lib/client';
 import { urlForImage } from '@/sanity/lib/image';
-import { PortableText } from '@portabletext/react';
 import { FaGithub, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import type { Metadata } from 'next';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 // Metadata for SEO
 export const metadata: Metadata = {
@@ -28,8 +28,8 @@ interface Author {
   _id: string;
   name: string;
   slug: { current: string };
-  image: any;
-  bio: any[];
+  image: SanityImageSource;
+  bio: unknown[];
   shortBio: string;
   role: string;
   socialLinks: SocialLinks;

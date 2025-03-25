@@ -6,11 +6,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { client } from '../lib/sanity';
 import { urlForImage } from '../lib/sanityImage';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 interface Author {
   _id: string;
   name: string;
-  image: any;
+  image: SanityImageSource;
   slug: {
     current: string;
   };
@@ -23,7 +24,7 @@ interface Post {
     current: string;
   };
   excerpt: string;
-  mainImage: any;
+  mainImage: SanityImageSource;
   publishedAt: string;
   readingTime: string;
   categories: { title: string }[];

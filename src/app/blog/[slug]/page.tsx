@@ -2,16 +2,15 @@ import React from "react";
 import Image from "next/image";
 import { client } from "@/sanity/lib/client";
 import { urlForImage } from "@/sanity/lib/image";
-import { PortableText } from "@portabletext/react";
+import { PortableText, PortableTextComponents } from "@portabletext/react";
 import { format } from "date-fns";
 import Link from "next/link";
 import { FaArrowLeft, FaCalendar, FaClock } from "react-icons/fa";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { PortableTextBlock } from "@portabletext/types";
-import AuthorBio from "./AuthorBio";
 import { Metadata } from "next";
 
-// Update Author interface: bio is now an array of PortableTextBlock
+// Interfaces
 interface Author {
   _id: string;
   name: string;
@@ -32,9 +31,8 @@ interface Post {
   publishedAt: string;
   author: Author;
   categories: Category[];
-  body: PortableTextBlock[]; // Expected to be an array
+  body: PortableTextBlock[];
   readTime?: string;
-  // SEO fields
   metaTitle?: string;
   metaDescription?: string;
   keywords?: string[];
@@ -49,10 +47,10 @@ interface Props {
   };
 }
 
-// Custom components for PortableText
-const portableTextComponents = {
+// PortableText Components with optional children prop
+const portableTextComponents: Partial<PortableTextComponents> = {
   types: {
-    image: ({ value }: any) => {
+    image: ({ value }) => {
       if (!value?.asset?._ref) {
         return null;
       }
@@ -60,88 +58,72 @@ const portableTextComponents = {
         <div className="relative w-full h-96 my-8 rounded-lg overflow-hidden">
           <Image
             src={urlForImage(value)?.url() || "/placeholder.jpg"}
-            alt={value.alt || "Blog image"}
+            alt={value.alt || "Image"}
             fill
             className="object-cover"
           />
         </div>
       );
     },
-    code: ({ value }: any) => (
+    code: ({ value }) => (
       <pre className="bg-gray-800 text-gray-100 p-4 rounded-lg overflow-x-auto my-4">
-        <code>{value.code}</code>
+        <code>{value?.code}</code>
       </pre>
     ),
   },
   block: {
-    h1: ({ children }: any) => (
+    h1: ({ children }) => (
       <h1 className="text-3xl font-bold mb-4 mt-8">{children}</h1>
     ),
-    h2: ({ children }: any) => (
+    h2: ({ children }) => (
       <h2 className="text-2xl font-bold mb-3 mt-6">{children}</h2>
     ),
-    h3: ({ children }: any) => (
+    h3: ({ children }) => (
       <h3 className="text-xl font-bold mb-2 mt-4">{children}</h3>
     ),
-    h4: ({ children }: any) => (
+    h4: ({ children }) => (
       <h4 className="text-lg font-bold mb-2 mt-4">{children}</h4>
     ),
-    normal: ({ children }: any) => {
-      if (!children || (Array.isArray(children) && children.length === 0)) {
-        return <br />;
-      }
-      return (
-        <p className="mb-4 text-slate-600 dark:text-slate-300">{children}</p>
-      );
-    },
-    blockquote: ({ children }: any) => (
+    normal: ({ children }) => (
+      <p className="mb-4 text-slate-600 dark:text-slate-300">{children}</p>
+    ),
+    blockquote: ({ children }) => (
       <blockquote className="border-l-4 border-indigo-500 pl-4 italic my-4 text-gray-700 dark:text-gray-300">
         {children}
       </blockquote>
     ),
   },
   marks: {
-    strong: ({ children }: any) => (
-      <strong className="font-bold">{children}</strong>
-    ),
-    em: ({ children }: any) => <em className="italic">{children}</em>,
-    code: ({ children }: any) => (
-      <code className="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-1 py-0.5 rounded">
+    link: ({ children, value }) => (
+      <a
+        href={value?.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-indigo-600 hover:text-indigo-500 underline"
+      >
         {children}
-      </code>
+      </a>
     ),
-    link: ({ value, children }: any) => {
-      const target = (value?.href || "").startsWith("http") ? "_blank" : undefined;
-      return (
-        <Link
-          href={value?.href || "#"}
-          target={target}
-          rel={target === "_blank" ? "noopener noreferrer" : undefined}
-          className="text-indigo-600 hover:text-indigo-500 underline"
-        >
-          {children}
-        </Link>
-      );
-    },
   },
   list: {
-    bullet: ({ children }: any) => (
+    bullet: ({ children }: { children?: React.ReactNode }) => (
       <ul className="list-disc pl-6 mb-4 space-y-1">{children}</ul>
     ),
-    number: ({ children }: any) => (
+    number: ({ children }: { children?: React.ReactNode }) => (
       <ol className="list-decimal pl-6 mb-4 space-y-1">{children}</ol>
     ),
   },
   listItem: {
-    bullet: ({ children }: any) => (
+    bullet: ({ children }: { children?: React.ReactNode }) => (
       <li className="text-slate-600 dark:text-slate-300">{children}</li>
     ),
-    number: ({ children }: any) => (
+    number: ({ children }: { children?: React.ReactNode }) => (
       <li className="text-slate-600 dark:text-slate-300">{children}</li>
     ),
   },
 };
 
+// Fetch Post
 async function getPost(slug: string): Promise<Post | null> {
   try {
     const post = await client.fetch(
@@ -177,73 +159,60 @@ async function getPost(slug: string): Promise<Post | null> {
       }`,
       { slug }
     );
-    
+
     if (post) {
-      // Generate OG image URL from the post's main image
-      const ogImage = post.mainImage ? urlForImage(post.mainImage)?.url() || '' : '';
-      return { ...post, ogImage };
+      return {
+        ...post,
+        ogImage: post.mainImage ? urlForImage(post.mainImage)?.url() || "" : "",
+      };
     }
-    
-    return post;
+
+    return null;
   } catch (error) {
     console.error("Error fetching post:", error);
     return null;
   }
 }
 
-// Generate metadata for SEO
+// Generate Metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPost(params.slug);
-  
+
   if (!post) {
     return {
-      title: 'Post Not Found',
-      description: 'The requested post could not be found.',
+      title: "Post Not Found",
+      description: "The requested post could not be found.",
     };
   }
-  
-  // Use SEO fields if available, otherwise fall back to regular fields
-  const title = post.metaTitle || post.title;
-  const authorName = post.author?.name || 'Unknown Author';
-  const description = post.metaDescription || post.excerpt || `Read ${post.title} by ${authorName}`;
-  const keywords = post.keywords?.join(', ');
-  
-  // Use the pre-generated ogImage
-  const imageUrl = post.ogImage || '';
-  
+
   return {
-    title,
-    description,
-    keywords,
+    title: post.metaTitle || post.title,
+    description:
+      post.metaDescription ||
+      post.excerpt ||
+      `Read ${post.title} by ${post.author?.name || "Unknown Author"}`,
+    keywords: post.keywords?.join(", "),
     openGraph: {
-      title,
-      description,
-      type: 'article',
-      ...(post.publishedAt && { publishedTime: post.publishedAt }),
-      ...(imageUrl && {
-        images: [{
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: title,
-        }],
-      }),
+      title: post.title,
+      description: post.metaDescription,
+      type: "article",
+      publishedTime: post.publishedAt,
+      images: post.ogImage
+        ? [{ url: post.ogImage, width: 1200, height: 630, alt: post.title }]
+        : [],
     },
     twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      ...(imageUrl && { images: [imageUrl] }),
+      card: "summary_large_image",
+      title: post.title,
+      description: post.metaDescription,
+      images: post.ogImage ? [post.ogImage] : [],
     },
-    ...(post.canonicalUrl && {
-      alternates: {
-        canonical: post.canonicalUrl,
-      },
-    }),
+    alternates: post.canonicalUrl ? { canonical: post.canonicalUrl } : undefined,
   };
 }
 
-export default async function BlogPost({ params: { slug } }: { params: { slug: string } }) {
+// Blog Post Page Component
+export default async function BlogPost({ params: { slug } }: Props) {
   const post = await getPost(slug);
 
   if (!post) {
@@ -251,7 +220,9 @@ export default async function BlogPost({ params: { slug } }: { params: { slug: s
       <div className="min-h-screen pt-36 pb-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl font-bold text-slate-900 mb-4">Post Not Found</h1>
-          <p className="text-xl text-slate-600 mb-8">The post you're looking for doesn't exist or has been removed.</p>
+          <p className="text-xl text-slate-600 mb-8">
+            {`The post you're looking for doesn't exist or has been removed.`}
+          </p>
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-500"
@@ -302,7 +273,10 @@ export default async function BlogPost({ params: { slug } }: { params: { slug: s
               {post.author.image && (
                 <Link href={`/authors/${post.author.slug.current}`}>
                   <Image
-                    src={urlForImage(post.author.image)?.url() || "/placeholder-avatar.jpg"}
+                    src={
+                      urlForImage(post.author.image)?.url() ||
+                      "/placeholder-avatar.jpg"
+                    }
                     alt={post.author.name}
                     width={32}
                     height={32}
@@ -310,7 +284,7 @@ export default async function BlogPost({ params: { slug } }: { params: { slug: s
                   />
                 </Link>
               )}
-              <Link 
+              <Link
                 href={`/authors/${post.author.slug.current}`}
                 className="hover:text-indigo-600 transition-colors"
               >
@@ -335,7 +309,10 @@ export default async function BlogPost({ params: { slug } }: { params: { slug: s
         {/* Main Image */}
         <div className="relative aspect-video w-full mb-12 rounded-xl overflow-hidden shadow-lg">
           <Image
-            src={post.ogImage || (urlForImage(post.mainImage)?.url() || "/placeholder.jpg")}
+            src={
+              post.ogImage ||
+              (urlForImage(post.mainImage)?.url() || "/placeholder.jpg")
+            }
             alt={post.title}
             fill
             className="object-cover"
@@ -353,9 +330,6 @@ export default async function BlogPost({ params: { slug } }: { params: { slug: s
             </p>
           )}
         </div>
-
-        {/* Author Bio */}
-        {post.author.bio && <AuthorBio author={post.author} />}
       </div>
     </div>
   );

@@ -4,14 +4,14 @@ import {defineArrayMember, defineField, defineType} from 'sanity'
 export const authorType = defineType({
   name: 'author',
   title: 'Author',
-  type: 'document',
   icon: UserIcon,
+  type: 'document',
   fields: [
     defineField({
       name: 'name',
       title: 'Name',
       type: 'string',
-      validation: (Rule: any) => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'tagline',
@@ -27,10 +27,11 @@ export const authorType = defineType({
         source: 'name',
         maxLength: 96,
       },
-      validation: (Rule: any) => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'image',
+      title: 'Image',
       type: 'image',
       options: {
         hotspot: true,
@@ -38,6 +39,7 @@ export const authorType = defineType({
     }),
     defineField({
       name: 'bio',
+      title: 'Bio',
       type: 'array',
       of: [
         defineArrayMember({

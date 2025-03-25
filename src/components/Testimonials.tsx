@@ -111,7 +111,7 @@ const Testimonials: React.FC = () => {
                 
                 <div className="flex-1">
                   <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 italic mb-6">
-                    "{testimonials[currentIndex].quote}"
+                    &quot;{testimonials[currentIndex].quote}&quot;
                   </p>
                   
                   <div>
@@ -169,7 +169,7 @@ const Testimonials: React.FC = () => {
       {/* Companies Section */}
       <div className="mt-16">
         <h3 className="text-2xl font-semibold text-center mb-8 text-gray-700 dark:text-gray-300">
-          Companies I've Worked With
+          Companies I have Worked With
         </h3>
         
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">

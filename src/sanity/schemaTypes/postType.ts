@@ -1,17 +1,17 @@
-import {DocumentTextIcon} from '@sanity/icons'
-import {defineArrayMember, defineField, defineType} from 'sanity'
+import {DocumentIcon} from '@sanity/icons'
+import {defineField, defineType} from 'sanity'
 
 export const postType = defineType({
   name: 'post',
   title: 'Post',
+  icon: DocumentIcon,
   type: 'document',
-  icon: DocumentTextIcon,
   fields: [
     defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
-      validation: (Rule: any) => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
@@ -21,7 +21,7 @@ export const postType = defineType({
         source: 'title',
         maxLength: 96,
       },
-      validation: (Rule: any) => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'excerpt',
@@ -34,6 +34,7 @@ export const postType = defineType({
       title: 'Author',
       type: 'reference',
       to: {type: 'author'},
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'mainImage',
@@ -72,14 +73,14 @@ export const postType = defineType({
       title: 'Meta Title',
       type: 'string',
       description: 'Title used for SEO purposes. If left blank, the post title will be used.',
-      validation: (Rule: any) => Rule.max(60).warning('Meta titles longer than 60 characters may be truncated in search results'),
+      validation: (Rule) => Rule.max(60).warning('Meta titles longer than 60 characters may be truncated in search results'),
     }),
     defineField({
       name: 'metaDescription',
       title: 'Meta Description',
       type: 'text',
       description: 'Description used for SEO purposes. If left blank, the post excerpt will be used.',
-      validation: (Rule: any) => Rule.max(160).warning('Meta descriptions longer than 160 characters may be truncated in search results'),
+      validation: (Rule) => Rule.max(160).warning('Meta descriptions longer than 160 characters may be truncated in search results'),
     }),
     defineField({
       name: 'keywords',

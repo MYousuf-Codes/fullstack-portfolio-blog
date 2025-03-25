@@ -15,9 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MYousuf-Codes",
-  description: "All about development",
+  title: "MYousuf Codes | Full-Stack Developer & Tech Blogger",
+  description: "Welcome to MYousuf Codes — a portfolio and blog by a professional full-stack web developer. Explore expert insights on web development, programming tutorials, and projects built with Next.js, React, Tailwind CSS, and Sanity. Lets build the web, one line of code at a time."
 };
+
 
 export default function RootLayout({
   children,

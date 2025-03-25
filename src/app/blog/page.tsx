@@ -16,7 +16,7 @@ async function getFeaturedPostsForMetadata() {
     `);
     
     // Generate OG image URLs from the posts' main images
-    return featuredPosts.map((post: any) => ({
+    return featuredPosts.map((post: { title: string; mainImage: SanityImageSource }) => ({
       ...post,
       imageUrl: post.mainImage ? urlForImage(post.mainImage)?.url() || '' : ''
     }));
@@ -78,12 +78,12 @@ interface Post {
   _id: string;
   title: string;
   slug: { current: string };
+  excerpt: string;
   mainImage: SanityImageSource;
   publishedAt: string;
-  author: Author;
+  readingTime: string;
   categories: Category[];
-  excerpt: string;
-  readTime?: string; // Optional read time
+  author: Author;
   // SEO fields
   metaTitle?: string;
   metaDescription?: string;
@@ -112,7 +112,7 @@ async function getPosts(): Promise<Post[]> {
           title
         },
         "excerpt": array::join(string::split(pt::text(body[0...200]), "")[0..200], "") + "...",
-        "readTime": string(round(length(pt::text(body)) / 200)) + " min read",
+        "readingTime": string(round(length(pt::text(body)) / 200)) + " min read",
         metaTitle,
         metaDescription,
         keywords,
@@ -155,7 +155,7 @@ export default async function BlogPage() {
             </span>
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Explore the latest articles about web development, programming, and technology.
+            {`Explore the latest articles about web development, programming, and technology.`}
           </p>
         </div>
 
