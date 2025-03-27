@@ -275,7 +275,7 @@ export default function About() {
               <div className="text-4xl font-bold text-indigo-600 mb-2">50+</div>
               <div className="text-slate-600">Team Members</div>
             </div>
-            <div>
+    <div>
               <div className="text-4xl font-bold text-indigo-600 mb-2">12+</div>
               <div className="text-slate-600">Years Experience</div>
             </div>

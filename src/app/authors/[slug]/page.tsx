@@ -19,7 +19,13 @@ import type { PortableTextBlock } from "@portabletext/types";
 import type { PortableTextReactComponents } from "@portabletext/react";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
-// Author interface
+// Add Next.js page types
+type Props = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+// --- Interfaces ---
 interface Author {
   _id: string;
   name: string;
@@ -38,7 +44,6 @@ interface Author {
   role: string;
 }
 
-// Post interface for author's posts
 interface Post {
   _id: string;
   title: string;
@@ -63,13 +68,11 @@ interface CodeValue {
   code: string;
 }
 
-// Define portable text components with proper types
+// --- Portable Text Components ---
 const portableTextComponents: Partial<PortableTextReactComponents> = {
   types: {
     image: ({ value }: { value: ImageValue }) => {
-      if (!value?.asset?._ref) {
-        return null;
-      }
+      if (!value?.asset?._ref) return null;
       return (
         <div className="relative w-full h-96 my-8 rounded-lg overflow-hidden">
           <Image
@@ -127,14 +130,15 @@ const portableTextComponents: Partial<PortableTextReactComponents> = {
   },
 };
 
-// generateMetadata now accepts only { params } as expected
+// --- generateMetadata ---
+// Removed the checkFields call to avoid type mismatches.
+// The function now cleanly fetches author data and returns proper Metadata.
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
   const data = await getAuthor(params.slug);
-
   if (!data) {
     return {
       title: "Author Not Found",
@@ -163,7 +167,7 @@ export async function generateMetadata({
   };
 }
 
-// Fetch author data from Sanity CMS
+// --- Data Fetching ---
 async function getAuthor(
   slug: string
 ): Promise<{ author: Author; posts: Post[] } | null> {
@@ -182,7 +186,6 @@ async function getAuthor(
     `,
       { slug }
     );
-
     if (!author) return null;
 
     const posts = await client.fetch(
@@ -203,7 +206,6 @@ async function getAuthor(
     `,
       { authorId: author._id }
     );
-
     return { author, posts };
   } catch (error) {
     console.error("Error fetching author:", error);
@@ -211,7 +213,7 @@ async function getAuthor(
   }
 }
 
-// Format date
+// --- Utility Function ---
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString("en-US", {
     year: "numeric",
@@ -220,21 +222,17 @@ function formatDate(dateString: string) {
   });
 }
 
-// AuthorPage component now includes searchParams with a default value
+// --- AuthorPage Component ---
 export default async function AuthorPage({
   params,
-}: {
-  params: { slug: string };
-}): Promise<React.ReactElement> {
+}: Props): Promise<React.ReactElement> {
   const data = await getAuthor(params.slug);
 
   if (!data) {
     return (
       <div className="min-h-screen pt-36 pb-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">
-            Author Not Found
-          </h1>
+          <h1 className="text-4xl font-bold text-slate-900 mb-4">Author Not Found</h1>
           <p className="text-xl text-slate-600 mb-8">
             {`The author you're looking for does not exist or has been removed.`}
           </p>
@@ -288,7 +286,6 @@ export default async function AuthorPage({
               <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2 text-center md:text-left">
                 {author.name}
               </h1>
-
               <p className="text-lg text-indigo-600 dark:text-indigo-400 mb-4 text-center md:text-left">
                 {author.role}
               </p>
@@ -361,7 +358,11 @@ export default async function AuthorPage({
             </h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {posts.map((post) => (
-                <Link key={post._id} href={`/blog/${post.slug.current}`} className="group">
+                <Link
+                  key={post._id}
+                  href={`/blog/${post.slug.current}`}
+                  className="group"
+                >
                   <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                     <div className="relative h-64 overflow-hidden">
                       <Image
