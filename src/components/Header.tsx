@@ -274,7 +274,6 @@ const Header: React.FC = () => {
           </div>
         </nav>
       )}
-      <script id="messenger-widget-b" src="https://cdn.botpenguin.com/website-bot.js" defer>67e5bd3121bc133d303222e6,67e5bc9a844d562ef61f629e</script>
     </header>
   );
 };
