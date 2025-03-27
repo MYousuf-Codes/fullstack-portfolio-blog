@@ -43,12 +43,16 @@ const Header: React.FC = () => {
     "Node.js",
   ];
 
-  const getLink = (item: string) => (item === "Home" ? "/" : `/${item.toLowerCase()}`);
+  const getLink = (item: string) =>
+    item === "Home" ? "/" : `/${item.toLowerCase()}`;
 
   // Pagination logic for categories
   const itemsPerPage = 4; // Number of categories per page on mobile
   const totalPages = Math.ceil(categories.length / itemsPerPage);
-  const paginatedCategories = categories.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+  const paginatedCategories = categories.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
 
   const nextPage = () => {
     if (currentPage < totalPages - 1) {
@@ -77,8 +81,8 @@ const Header: React.FC = () => {
           MYousaf-Codes
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex" aria-label="Main Navigation">
+        {/* Desktop Navigation (moved to right with ml-auto) */}
+        <nav className="hidden md:flex ml-auto" aria-label="Main Navigation">
           <ul className="flex space-x-6">
             {mainLinks.map((item) => {
               if (item === "Blog") {
@@ -92,30 +96,40 @@ const Header: React.FC = () => {
                   >
                     <Link
                       href="/blog"
-                      className={`text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${pathname.startsWith("/blog") || pathname.startsWith("/authors")
+                      className={`relative text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${
+                        pathname.startsWith("/blog") || pathname.startsWith("/authors")
                           ? "text-blue-600 dark:text-blue-400"
                           : ""
-                        }`}
+                      }`}
                     >
                       {item}
+                      {/* Underline hover effect */}
+                      <span className="absolute left-0 bottom-0 w-full h-0.5 bg-blue-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                     </Link>
 
                     {/* Dropdown Menu */}
                     <div
-                      className={`absolute top-full left-0 mt-1 w-36 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 transition-opacity duration-200 ${blogDropdownOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-                        }`}
+                      className={`absolute top-full left-0 mt-1 w-36 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 transition-opacity duration-200 ${
+                        blogDropdownOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                      }`}
                     >
                       <Link
                         href="/blog"
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${pathname === "/blog" ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"
-                          }`}
+                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${
+                          pathname === "/blog"
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-gray-700 dark:text-gray-300"
+                        }`}
                       >
                         Blog
                       </Link>
                       <Link
                         href="/authors"
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${pathname === "/authors" ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"
-                          }`}
+                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${
+                          pathname === "/authors"
+                            ? "text-blue-600 dark:text-blue-400"
+                            : "text-gray-700 dark:text-gray-300"
+                        }`}
                       >
                         Authors
                       </Link>
@@ -125,13 +139,18 @@ const Header: React.FC = () => {
               }
 
               return (
-                <li key={item}>
+                <li key={item} className="relative group">
                   <Link
                     href={getLink(item)}
-                    className={`text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${pathname === getLink(item) ? "text-blue-600 dark:text-blue-400" : ""
-                      }`}
+                    className={`relative text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${
+                      pathname === getLink(item)
+                        ? "text-blue-600 dark:text-blue-400"
+                        : ""
+                    }`}
                   >
                     {item}
+                    {/* Underline hover effect */}
+                    <span className="absolute left-0 bottom-0 w-full h-0.5 bg-blue-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                   </Link>
                 </li>
               );
@@ -171,7 +190,11 @@ const Header: React.FC = () => {
                               aria-expanded={mobileDropdownOpen}
                             >
                               {item}
-                              <ChevronRight className={`w-4 h-4 transition-transform ${mobileDropdownOpen ? 'rotate-90' : ''}`} />
+                              <ChevronRight
+                                className={`w-4 h-4 transition-transform ${
+                                  mobileDropdownOpen ? "rotate-90" : ""
+                                }`}
+                              />
                             </button>
 
                             {/* Mobile Dropdown */}
@@ -237,8 +260,11 @@ const Header: React.FC = () => {
             <button
               onClick={prevPage}
               disabled={currentPage === 0}
-              className={`p-2 rounded-full ${currentPage === 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200 dark:hover:bg-gray-700"
-                }`}
+              className={`p-2 rounded-full ${
+                currentPage === 0
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
               aria-label="Previous categories"
             >
               <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
@@ -250,10 +276,11 @@ const Header: React.FC = () => {
                 <li key={category}>
                   <button
                     onClick={() => setActiveTab(category)}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition ${activeTab === category
-                      ? "bg-blue-600 text-white"
-                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                      }`}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition ${
+                      activeTab === category
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    }`}
                   >
                     {category}
                   </button>
@@ -265,8 +292,11 @@ const Header: React.FC = () => {
             <button
               onClick={nextPage}
               disabled={currentPage >= totalPages - 1}
-              className={`p-2 rounded-full ${currentPage >= totalPages - 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200 dark:hover:bg-gray-700"
-                }`}
+              className={`p-2 rounded-full ${
+                currentPage >= totalPages - 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-gray-200 dark:hover:bg-gray-700"
+              }`}
               aria-label="Next categories"
             >
               <ChevronRight className="w-5 h-5 text-gray-700 dark:text-gray-300" />

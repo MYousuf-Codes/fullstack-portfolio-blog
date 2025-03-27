@@ -57,7 +57,7 @@ const portableTextComponents: Partial<PortableTextComponents> = {
       return (
         <div className="relative w-full h-96 my-8 rounded-lg overflow-hidden">
           <Image
-            src={urlForImage(value)?.url() || "/placeholder.jpg"}
+            src={urlForImage(value)?.url() || "/image/placeholder.png"}
             alt={value.alt || "Image"}
             fill
             className="object-cover"
@@ -163,7 +163,7 @@ async function getPost(slug: string): Promise<Post | null> {
     if (post) {
       return {
         ...post,
-        ogImage: post.mainImage ? urlForImage(post.mainImage)?.url() || "" : "",
+        ogImage: post.mainImage ? urlForImage(post.mainImage)?.url() || "/images/placeholder.png" : null,
       };
     }
 
@@ -275,7 +275,7 @@ export default async function BlogPost({ params: { slug } }: Props) {
                   <Image
                     src={
                       urlForImage(post.author.image)?.url() ||
-                      "/placeholder-avatar.jpg"
+                      "/images/placeholder.png"
                     }
                     alt={post.author.name}
                     width={32}
@@ -311,7 +311,7 @@ export default async function BlogPost({ params: { slug } }: Props) {
           <Image
             src={
               post.ogImage ||
-              (urlForImage(post.mainImage)?.url() || "/placeholder.jpg")
+              (urlForImage(post.mainImage)?.url() || "/images/placeholder.png" )
             }
             alt={post.title}
             fill

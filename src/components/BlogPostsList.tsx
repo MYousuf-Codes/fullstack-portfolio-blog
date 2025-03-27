@@ -75,7 +75,7 @@ export default function BlogPostsList({ posts, categories }: BlogPostsListProps)
             >
               <div className="relative h-64 overflow-hidden">
                 <Image
-                  src={post.ogImage || (urlForImage(post.mainImage)?.url() || '/placeholder.jpg')}
+                  src={post.ogImage || (urlForImage(post.mainImage)?.url() || "/images/placeholder.png")}
                   alt={post.title}
                   fill
                   className="object-cover hover:scale-105 transition-transform duration-300"
@@ -119,7 +119,7 @@ export default function BlogPostsList({ posts, categories }: BlogPostsListProps)
                     {post.author.image && (
                       <Link href={`/authors/${post.author.slug.current}`}>
                         <Image
-                          src={urlForImage(post.author.image)?.url() || '/placeholder-avatar.jpg'}
+                          src={urlForImage(post.author.image)?.url() || "/images/placeholder.png"}
                           alt={post.author.name}
                           width={32}
                           height={32}

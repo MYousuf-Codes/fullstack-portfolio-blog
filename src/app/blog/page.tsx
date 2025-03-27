@@ -25,7 +25,6 @@ async function getFeaturedPostsForMetadata() {
     return [];
   }
 }
-
 // Metadata for SEO
 export async function generateMetadata(): Promise<Metadata> {
   const featuredPosts = await getFeaturedPostsForMetadata();
@@ -33,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
   // Get the first featured post image for OG image, or use default
   const ogImageUrl = featuredPosts.length > 0 && featuredPosts[0].imageUrl 
     ? featuredPosts[0].imageUrl 
-    : '/og-blog.jpg';
+    : "images/placeholder.png";
   
   return {
     title: 'Blog | Latest Articles and Insights',
@@ -123,7 +122,7 @@ async function getPosts(): Promise<Post[]> {
     // Process posts to add OG image URLs
     return posts.map((post: Post) => {
       // Generate OG image URL from the post's main image
-      const ogImage = post.mainImage ? urlForImage(post.mainImage)?.url() || '' : '';
+      const ogImage = post.mainImage ? urlForImage(post.mainImage)?.url() || "/images/placeholder.png" : null;
       return { ...post, ogImage };
     });
   } catch (error) {

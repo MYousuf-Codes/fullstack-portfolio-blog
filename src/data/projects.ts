@@ -24,7 +24,7 @@ export const projects: Project[] = [
     description: "A full-stack e-commerce platform with user authentication, product management, and payment integration.",
     techStack: ["Next.js", "TypeScript", "TailwindCSS", "Sanity", "Redu", "Auth.js", "Stripe"],
     githubUrl: "https://github.com/myousuf-codes/comforty-furnitures",
-    liveUrl: "https://comforty-furniture.vercel.app/",
+    liveUrl: "https://comforty-furnitures.vercel.app/",
     imageUrl: "/images/ecommerce.png"
   },
   {

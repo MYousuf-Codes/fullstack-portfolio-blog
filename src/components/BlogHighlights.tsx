@@ -172,7 +172,7 @@ const BlogHighlights: React.FC = () => {
                   {post.author && post.author.image && (
                     <Link href={`/authors/${post.author.slug.current}`}>
                       <Image
-                        src={urlForImage(post.author.image).url() || '/placeholder-avatar.jpg'}
+                        src={urlForImage(post.author.image).url() || "/images/placeholder.png" }
                         alt={post.author.name}
                         width={32}
                         height={32}

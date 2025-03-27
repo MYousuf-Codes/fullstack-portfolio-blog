@@ -367,7 +367,7 @@ export default async function AuthorPage({ params }: PageProps) {
                   <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                     <div className="relative h-64 overflow-hidden">
                       <Image
-                        src={urlForImage(post.mainImage)?.url() || "/placeholder.jpg"}
+                        src={urlForImage(post.mainImage)?.url() || "/images/placeholder.png"}
                         alt={post.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
