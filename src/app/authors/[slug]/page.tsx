@@ -14,16 +14,20 @@ import {
 import { PortableText } from "@portabletext/react";
 import { client } from "@/sanity/lib/client";
 import { urlForImage } from "@/sanity/lib/image";
-import { Metadata } from "next";
+import { Metadata, ResolvingMetadata } from "next";
 import type { PortableTextBlock } from "@portabletext/types";
 import type { PortableTextReactComponents } from "@portabletext/react";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
-// Add Next.js page types
-type Props = {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+// Next.js Page Props
+type PageParams = {
+  slug: string;
 };
+
+type PageProps = {
+  params: PageParams;
+  searchParams?: Record<string, string | string[] | undefined>;
+};;
 
 // --- Interfaces ---
 interface Author {
@@ -133,11 +137,10 @@ const portableTextComponents: Partial<PortableTextReactComponents> = {
 // --- generateMetadata ---
 // Removed the checkFields call to avoid type mismatches.
 // The function now cleanly fetches author data and returns proper Metadata.
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: PageProps,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   const data = await getAuthor(params.slug);
   if (!data) {
     return {
@@ -223,9 +226,7 @@ function formatDate(dateString: string) {
 }
 
 // --- AuthorPage Component ---
-export default async function AuthorPage({
-  params,
-}: Props): Promise<React.ReactElement> {
+export default async function AuthorPage({ params }: PageProps) {
   const data = await getAuthor(params.slug);
 
   if (!data) {
