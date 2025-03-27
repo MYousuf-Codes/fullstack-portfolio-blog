@@ -83,43 +83,39 @@ const Header: React.FC = () => {
             {mainLinks.map((item) => {
               if (item === "Blog") {
                 return (
-                  <li 
-                    key={item} 
-                    className="relative group" 
+                  <li
+                    key={item}
+                    className="relative group"
                     ref={blogDropdownRef}
                     onMouseEnter={() => setBlogDropdownOpen(true)}
                     onMouseLeave={() => setBlogDropdownOpen(false)}
                   >
                     <Link
                       href="/blog"
-                      className={`text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${
-                        pathname.startsWith("/blog") || pathname.startsWith("/authors") 
-                          ? "text-blue-600 dark:text-blue-400" 
+                      className={`text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${pathname.startsWith("/blog") || pathname.startsWith("/authors")
+                          ? "text-blue-600 dark:text-blue-400"
                           : ""
-                      }`}
+                        }`}
                     >
                       {item}
                     </Link>
-                    
+
                     {/* Dropdown Menu */}
-                    <div 
-                      className={`absolute top-full left-0 mt-1 w-36 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 transition-opacity duration-200 ${
-                        blogDropdownOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-                      }`}
+                    <div
+                      className={`absolute top-full left-0 mt-1 w-36 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 transition-opacity duration-200 ${blogDropdownOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+                        }`}
                     >
                       <Link
                         href="/blog"
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${
-                          pathname === "/blog" ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"
-                        }`}
+                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${pathname === "/blog" ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"
+                          }`}
                       >
                         Blog
                       </Link>
                       <Link
                         href="/authors"
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${
-                          pathname === "/authors" ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"
-                        }`}
+                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${pathname === "/authors" ? "text-blue-600 dark:text-blue-400" : "text-gray-700 dark:text-gray-300"
+                          }`}
                       >
                         Authors
                       </Link>
@@ -127,14 +123,13 @@ const Header: React.FC = () => {
                   </li>
                 );
               }
-              
+
               return (
                 <li key={item}>
                   <Link
                     href={getLink(item)}
-                    className={`text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${
-                      pathname === getLink(item) ? "text-blue-600 dark:text-blue-400" : ""
-                    }`}
+                    className={`text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${pathname === getLink(item) ? "text-blue-600 dark:text-blue-400" : ""
+                      }`}
                   >
                     {item}
                   </Link>
@@ -178,7 +173,7 @@ const Header: React.FC = () => {
                               {item}
                               <ChevronRight className={`w-4 h-4 transition-transform ${mobileDropdownOpen ? 'rotate-90' : ''}`} />
                             </button>
-                            
+
                             {/* Mobile Dropdown */}
                             {mobileDropdownOpen && (
                               <div className="mt-2 w-full flex flex-col items-center space-y-2 py-2 border-t border-b border-gray-200 dark:border-gray-700">
@@ -204,7 +199,7 @@ const Header: React.FC = () => {
                         </li>
                       );
                     }
-                    
+
                     return (
                       <li key={item}>
                         <SheetClose asChild>
@@ -256,8 +251,8 @@ const Header: React.FC = () => {
                   <button
                     onClick={() => setActiveTab(category)}
                     className={`px-4 py-2 rounded-md text-sm font-medium transition ${activeTab === category
-                        ? "bg-blue-600 text-white"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                       }`}
                   >
                     {category}
@@ -279,6 +274,7 @@ const Header: React.FC = () => {
           </div>
         </nav>
       )}
+      <script id="messenger-widget-b" src="https://cdn.botpenguin.com/website-bot.js" defer>67e5bd3121bc133d303222e6,67e5bc9a844d562ef61f629e</script>
     </header>
   );
 };
