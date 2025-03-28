@@ -44,7 +44,7 @@ const DBTypewriter: React.FC = () => {
 
 const Hero: React.FC = () => {
   return (
-    <section className="w-full min-h-screen py-32 px-4 max-w-6xl mx-auto">
+    <section className="w-full pb-32 pt-32 px-4 max-w-6xl mx-auto">
 
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center relative z-10">
         {/* Left Section - Content */}

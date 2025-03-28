@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { FaGithub, FaTwitter, FaLinkedin, FaEnvelope } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const Footer: React.FC = () => {
-  const mainLinks = ["Home", "Tutorials", "Blog", "News", "About", "Contact"];
+  const mainLinks = ["Home", "Projects", "Services", "Tutorials", "Blog", "About", "Contact"];
   const tutorialCategories = [
     "HTML",
     "CSS",
@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
 
   const getLink = (item: string) => (item === "Home" ? "/" : `/${item.toLowerCase()}`);
 
-    return (
+  return (
     <footer className="bg-gradient-to-b from-gray-900 to-gray-800 text-gray-200 py-16 relative overflow-hidden">
       {/* Decorative Elements */}
       <div className="absolute inset-0 opacity-10">
@@ -46,15 +46,6 @@ const Footer: React.FC = () => {
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <FaGithub size={20} />
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.1 }}
-                href="https://twitter.com/myousuf-codes"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                <FaTwitter size={20} />
               </motion.a>
               <motion.a
                 whileHover={{ scale: 1.1 }}
@@ -99,7 +90,7 @@ const Footer: React.FC = () => {
               {tutorialCategories.map((category) => (
                 <li key={category}>
                   <Link
-                    href={`/tutorials/${category.toLowerCase()}`}
+                    href={`/tutorials`}
                     className="text-gray-400 hover:text-white transition-colors hover:translate-x-1 inline-block"
                   >
                     {category}
@@ -128,11 +119,6 @@ const Footer: React.FC = () => {
                   Latest Articles
                 </Link>
               </li>
-              <li>
-                <Link href="/news" className="hover:text-white transition-colors">
-                  News & Updates
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
@@ -157,7 +143,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
-        </footer>
+    </footer>
   );
 };
 

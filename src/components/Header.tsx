@@ -1,37 +1,51 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Menu, X, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
+import * as NavigationMenu from "@radix-ui/react-navigation-menu";
+import classNames from "classnames";
 import {
   Sheet,
   SheetTrigger,
   SheetContent,
   SheetClose,
   SheetTitle,
-  SheetDescription
+  SheetDescription,
 } from "@/components/ui/sheet";
 
+interface NavLinkProps {
+  href: string;
+  title: string;
+  active?: boolean;
+}
+
+const NavLink: React.FC<NavLinkProps> = ({ href, title, active }) => (
+  <NavigationMenu.Link asChild>
+    <Link
+      href={href}
+      className={classNames(
+        "relative text-[15px] font-medium text-gray-700 dark:text-gray-300 transition hover:text-blue-600 dark:hover:text-blue-400 text-center",
+        active && "text-blue-600 dark:text-blue-400"
+      )}
+    >
+      {title}
+      <span className="absolute left-0 bottom-0 w-full h-0.5 bg-blue-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+    </Link>
+  </NavigationMenu.Link>
+);
+
 const Header: React.FC = () => {
-  // Declare hooks unconditionally at the top
-  const [activeTab, setActiveTab] = useState("All");
-  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0); // Pagination hook
-  const [blogDropdownOpen, setBlogDropdownOpen] = useState(false);
-  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
-  const blogDropdownRef = useRef<HTMLLIElement>(null);
+  const pathname = usePathname();
+  const [activeTab, setActiveTab] = useState("All");
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Mobile dropdown states for Blog and Services
+  const [mobileBlogDropdownOpen, setMobileBlogDropdownOpen] = useState(false);
+  const [mobileServicesDropdownOpen, setMobileServicesDropdownOpen] = useState(false);
 
-  // Now conditionally render as all hooks are declared
-  if (!mounted) {
-    return null;
-  }
-
-  const mainLinks = ["Home", "Tutorials", "Blog", "About", "Contact"];
+  // Tutorials pagination state (if on /tutorials)
+  const [currentPage, setCurrentPage] = useState(0);
   const categories = [
     "HTML",
     "CSS",
@@ -42,28 +56,28 @@ const Header: React.FC = () => {
     "Next.js",
     "Node.js",
   ];
-
-  const getLink = (item: string) =>
-    item === "Home" ? "/" : `/${item.toLowerCase()}`;
-
-  // Pagination logic for categories
-  const itemsPerPage = 4; // Number of categories per page on mobile
+  const itemsPerPage = 4;
   const totalPages = Math.ceil(categories.length / itemsPerPage);
   const paginatedCategories = categories.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   );
 
-  const nextPage = () => {
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
+  if (!mounted) return null;
+
+  // Main navigation links
+  const mainLinks = ["Home", "Projects", "Services", "Tutorials", "Blog", "About", "Contact"];
+  const getLink = (item: string) => (item === "Home" ? "/" : `/${item.toLowerCase()}`);
+
+  const nextPage = () => {
+    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
+  };
   const prevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
 
   return (
@@ -81,88 +95,99 @@ const Header: React.FC = () => {
           MYousaf-Codes
         </Link>
 
-        {/* Desktop Navigation (moved to right with ml-auto) */}
-        <nav className="hidden md:flex ml-auto" aria-label="Main Navigation">
-          <ul className="flex space-x-6">
-            {mainLinks.map((item) => {
-              if (item === "Blog") {
+        {/* Desktop Navigation using Radix NavigationMenu */}
+        <nav className="hidden md:block flex-1">
+          <NavigationMenu.Root>
+            <NavigationMenu.List className="flex justify-end items-center space-x-10">
+              {mainLinks.map((item) => {
+                // Blog dropdown (with Blog & Authors)
+                if (item === "Blog") {
+                  return (
+                    <NavigationMenu.Item key={item}>
+                      <NavigationMenu.Trigger
+                        className="group flex items-center gap-1 rounded px-3 py-2 text-[15px] font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:shadow-[0_0_0_2px] focus:shadow-blue-400"
+                      >
+                        {item}
+                        <ChevronDown
+                          className="w-4 h-4 transition-transform duration-250 group-data-[state=open]:-rotate-180"
+                          aria-hidden
+                        />
+                      </NavigationMenu.Trigger>
+                      <NavigationMenu.Content className="absolute top-full mt-2 w-56 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 z-10">
+                        <ul className="p-2">
+                          <li>
+                            <NavLink href="/blog" title="Blog" active={pathname === "/blog"} />
+                          </li>
+                          <li className="mt-1">
+                            <NavLink href="/authors" title="Authors" active={pathname === "/authors"} />
+                          </li>
+                        </ul>
+                      </NavigationMenu.Content>
+                    </NavigationMenu.Item>
+                  );
+                }
+
+                // Services dropdown (with multiple service links)
+                if (item === "Services") {
+                  return (
+                    <NavigationMenu.Item key={item}>
+                      <NavigationMenu.Trigger
+                        className="group flex items-center gap-1 rounded px-3 py-2 text-[15px] font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 focus:outline-none focus:shadow-[0_0_0_2px] focus:shadow-blue-400"
+                      >
+                        {item}
+                        <ChevronDown
+                          className="w-4 h-4 transition-transform duration-250 group-data-[state=open]:-rotate-180"
+                          aria-hidden
+                        />
+                      </NavigationMenu.Trigger>
+                      <NavigationMenu.Content className="absolute top-full mt-2 w-56 bg-white dark:bg-gray-800 rounded-md shadow-lg py-2 z-10">
+                        <ul className="p-2">
+                          <li>
+                            <NavLink
+                              href="/services"
+                              title="Services"
+                              active={pathname === "/services"}
+                            />
+                          </li>
+                          <li className="mt-1">
+                            <NavLink
+                              href="/services/web-development"
+                              title="Full-Stack Web Development"
+                              active={pathname === "/services/web-development"}
+                            />
+                          </li>
+                          <li className="mt-1">
+                            <NavLink
+                              href="/services/ai-chatbot-develpoment"
+                              title="AI Chatbot Development"
+                              active={pathname === "/services/ai-chatbot-development"}
+                            />
+                          </li>
+                        </ul>
+                      </NavigationMenu.Content>
+                    </NavigationMenu.Item>
+                  );
+                }
+
+                // Default link
                 return (
-                  <li
-                    key={item}
-                    className="relative group"
-                    ref={blogDropdownRef}
-                    onMouseEnter={() => setBlogDropdownOpen(true)}
-                    onMouseLeave={() => setBlogDropdownOpen(false)}
-                  >
-                    <Link
-                      href="/blog"
-                      className={`relative text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${
-                        pathname.startsWith("/blog") || pathname.startsWith("/authors")
-                          ? "text-blue-600 dark:text-blue-400"
-                          : ""
-                      }`}
-                    >
-                      {item}
-                      {/* Underline hover effect */}
-                      <span className="absolute left-0 bottom-0 w-full h-0.5 bg-blue-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-                    </Link>
-
-                    {/* Dropdown Menu */}
-                    <div
-                      className={`absolute top-full left-0 mt-1 w-36 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 transition-opacity duration-200 ${
-                        blogDropdownOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-                      }`}
-                    >
-                      <Link
-                        href="/blog"
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${
-                          pathname === "/blog"
-                            ? "text-blue-600 dark:text-blue-400"
-                            : "text-gray-700 dark:text-gray-300"
-                        }`}
-                      >
-                        Blog
-                      </Link>
-                      <Link
-                        href="/authors"
-                        className={`block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition ${
-                          pathname === "/authors"
-                            ? "text-blue-600 dark:text-blue-400"
-                            : "text-gray-700 dark:text-gray-300"
-                        }`}
-                      >
-                        Authors
-                      </Link>
-                    </div>
-                  </li>
+                  <NavigationMenu.Item key={item}>
+                    <NavLink href={getLink(item)} title={item} active={pathname === getLink(item)} />
+                  </NavigationMenu.Item>
                 );
-              }
-
-              return (
-                <li key={item} className="relative group">
-                  <Link
-                    href={getLink(item)}
-                    className={`relative text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition ${
-                      pathname === getLink(item)
-                        ? "text-blue-600 dark:text-blue-400"
-                        : ""
-                    }`}
-                  >
-                    {item}
-                    {/* Underline hover effect */}
-                    <span className="absolute left-0 bottom-0 w-full h-0.5 bg-blue-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+              })}
+              <NavigationMenu.Indicator className="top-full z-10 flex h-2.5 items-end justify-center overflow-hidden transition-[width,transform_250ms_ease] data-[state=hidden]:animate-fadeOut data-[state=visible]:animate-fadeIn">
+                <div className="relative top-[70%] w-2.5 h-2.5 rotate-45 rounded-tl-sm bg-blue-600" />
+              </NavigationMenu.Indicator>
+            </NavigationMenu.List>
+          </NavigationMenu.Root>
         </nav>
 
-        <div className="flex items-center space-x-4">
-          {/* Mobile Menu Trigger using Sheet */}
+        {/* Mobile Menu Trigger */}
+        <div className="flex items-center md:hidden">
           <Sheet>
             <SheetTrigger asChild>
-              <button className="md:hidden" aria-label="Open mobile navigation">
+              <button className="p-2" aria-label="Open mobile navigation">
                 <Menu className="w-6 h-6 text-gray-900 dark:text-white" />
               </button>
             </SheetTrigger>
@@ -175,60 +200,103 @@ const Header: React.FC = () => {
               <SheetDescription id="sheet-description">
                 Access main navigation links and website sections
               </SheetDescription>
-
-              {/* Mobile Menu */}
               <nav aria-label="Mobile Navigation" className="mt-6">
                 <ul className="flex flex-col items-center space-y-4 py-4">
                   {mainLinks.map((item) => {
                     if (item === "Blog") {
                       return (
                         <li key={item} className="w-full flex flex-col items-center">
-                          <div className="flex flex-col items-center w-full">
-                            <button
-                              onClick={() => setMobileDropdownOpen(!mobileDropdownOpen)}
-                              className="flex items-center gap-1 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
-                              aria-expanded={mobileDropdownOpen}
-                            >
-                              {item}
-                              <ChevronRight
-                                className={`w-4 h-4 transition-transform ${
-                                  mobileDropdownOpen ? "rotate-90" : ""
-                                }`}
-                              />
-                            </button>
-
-                            {/* Mobile Dropdown */}
-                            {mobileDropdownOpen && (
-                              <div className="mt-2 w-full flex flex-col items-center space-y-2 py-2 border-t border-b border-gray-200 dark:border-gray-700">
-                                <SheetClose asChild>
-                                  <Link
-                                    href="/blog"
-                                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
-                                  >
-                                    Blog
-                                  </Link>
-                                </SheetClose>
-                                <SheetClose asChild>
-                                  <Link
-                                    href="/authors"
-                                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
-                                  >
-                                    Authors
-                                  </Link>
-                                </SheetClose>
-                              </div>
-                            )}
-                          </div>
+                          <button
+                            onClick={() => setMobileBlogDropdownOpen(!mobileBlogDropdownOpen)}
+                            className="flex items-center gap-1 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                            aria-expanded={mobileBlogDropdownOpen}
+                          >
+                            {item}
+                            <ChevronDown
+                              className={classNames(
+                                "w-4 h-4 transition-transform",
+                                mobileBlogDropdownOpen && "rotate-180"
+                              )}
+                            />
+                          </button>
+                          {mobileBlogDropdownOpen && (
+                            <div className="mt-2 w-full border border-gray-200 dark:border-gray-700 rounded-md p-4">
+                              <SheetClose asChild>
+                                <Link
+                                  href="/blog"
+                                  className="block w-full text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                                >
+                                  Blog
+                                </Link>
+                              </SheetClose>
+                              <SheetClose asChild>
+                                <Link
+                                  href="/authors"
+                                  className="block w-full mt-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                                >
+                                  Authors
+                                </Link>
+                              </SheetClose>
+                            </div>
+                          )}
                         </li>
                       );
                     }
-
+                    if (item === "Services") {
+                      return (
+                        <li key={item} className="w-full flex flex-col items-center">
+                          <button
+                            onClick={() =>
+                              setMobileServicesDropdownOpen(!mobileServicesDropdownOpen)
+                            }
+                            className="flex items-center gap-1 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                            aria-expanded={mobileServicesDropdownOpen}
+                          >
+                            {item}
+                            <ChevronDown
+                              className={classNames(
+                                "w-4 h-4 transition-transform",
+                                mobileServicesDropdownOpen && "rotate-180"
+                              )}
+                            />
+                          </button>
+                          {mobileServicesDropdownOpen && (
+                            <div className="mt-2 w-full border border-gray-200 dark:border-gray-700 rounded-md p-4">
+                              <SheetClose asChild>
+                                <Link
+                                  href="/services"
+                                  className="block w-full text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                                >
+                                  Services
+                                </Link>
+                              </SheetClose>
+                              <SheetClose asChild>
+                                <Link
+                                  href="/services/web-development"
+                                  className="block w-full mt-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                                >
+                                  Full-Stack Web Development
+                                </Link>
+                              </SheetClose>
+                              <SheetClose asChild>
+                                <Link
+                                  href="/services/ai-chatbot-develpoment"
+                                  className="block w-full mt-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                                >
+                                  AI Chatbot Development
+                                </Link>
+                              </SheetClose>
+                            </div>
+                          )}
+                        </li>
+                      );
+                    }
                     return (
-                      <li key={item}>
+                      <li key={item} className="w-full">
                         <SheetClose asChild>
                           <Link
                             href={getLink(item)}
-                            className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
+                            className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition text-center block"
                           >
                             {item}
                           </Link>
@@ -238,8 +306,6 @@ const Header: React.FC = () => {
                   })}
                 </ul>
               </nav>
-
-              {/* Close Button */}
               <div className="absolute top-4 right-4">
                 <SheetClose asChild>
                   <button aria-label="Close mobile navigation">
@@ -252,11 +318,13 @@ const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Tutorials Tab Navigation (Responsive with Pagination) */}
+      {/* Tutorials Categories Navigation */}
       {pathname === "/tutorials" && (
-        <nav className="bg-gray-100 dark:bg-gray-800 py-2 px-2" aria-label="Tutorial Categories">
+        <nav
+          className="bg-gray-100 dark:bg-gray-800 py-2 px-2"
+          aria-label="Tutorial Categories"
+        >
           <div className="flex justify-between items-center px-2 sm:px-4">
-            {/* Previous Button */}
             <button
               onClick={prevPage}
               disabled={currentPage === 0}
@@ -269,8 +337,6 @@ const Header: React.FC = () => {
             >
               <ChevronLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
             </button>
-
-            {/* Categories List */}
             <ul className="flex justify-center space-x-2 sm:space-x-4">
               {paginatedCategories.map((category) => (
                 <li key={category}>
@@ -287,8 +353,6 @@ const Header: React.FC = () => {
                 </li>
               ))}
             </ul>
-
-            {/* Next Button */}
             <button
               onClick={nextPage}
               disabled={currentPage >= totalPages - 1}

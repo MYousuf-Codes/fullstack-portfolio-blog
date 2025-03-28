@@ -19,12 +19,20 @@ const FeaturedProjects: React.FC = () => {
     return (
         <section className="py-16 px-6 max-w-6xl mx-auto">
 
-            <h1 className="text-6xl md:text-7xl font-bold text-slate-900 mb-4">
-                Featured{" "}
-                <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    Projects
-                </span>
-            </h1>
+            <div className="flex justify-between items-center mb-4">
+                <h1 className="text-4xl md:text-7xl font-bold text-slate-900">
+                    Featured{" "}
+                    <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        Projects
+                    </span>
+                </h1>
+                <Link href={`/projects`}>
+                <h4 className="text-sm md:text-7xl cursor-pointer hover:text-purple-600 hover:font-semibold hover:underline-offset-2 dark:text-gray-300 flex">
+                    View All
+                    <span className="text-md">→</span>
+                </h4>
+                </Link>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {getProjectsForCurrentPage().map((project) => (

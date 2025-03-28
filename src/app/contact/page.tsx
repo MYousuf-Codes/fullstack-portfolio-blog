@@ -4,12 +4,17 @@ import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaCheckCircle, FaChevronD
 import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
 
+// EmailJS configuration
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '';
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '';
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '';
+
 // Contact information
 const contactInfo = {
   address: "Karachi, Sindh, Pakistan",
   phone: "+92 301 2381884",
   email: "yousufhere.dev@gmail.com",
-  hours: "Monday - Sunday: 9:00 AM - 6:00 PM"
+  hours: "Monday - Sunday: 9:00 AM - 12:00 AM"
 };
 
 // Form fields configuration
@@ -57,7 +62,7 @@ export default function Contact() {
   // Initialize EmailJS
   useEffect(() => {
     try {
-      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "nRHwdkPfgbKpsIBc0";
+      const publicKey = EMAILJS_PUBLIC_KEY;
       
       emailjs.init({
         publicKey: publicKey,
@@ -143,15 +148,15 @@ export default function Contact() {
     setSubmitStatus({ success: false, message: "" }); // Reset status
     
     try {
-      // Get values from .env.local - using hardcoded values for reliability
-      const serviceId = "service_ikspnml"; // Use the known working service ID
-      const templateId = "template_6kbac1u"; // Use the known working template ID
-      const publicKey = "nRHwdkPfgbKpsIBc0"; // Use the known working public key
-      
+
+      const templateId = EMAILJS_TEMPLATE_ID; 
+      const publicKey = EMAILJS_PUBLIC_KEY;   
+      const serviceId = EMAILJS_SERVICE_ID;
+1
       console.log("Attempting to send email with:", { 
         serviceId, 
         templateId,
-        publicKey: publicKey.substring(0, 4) + "..."
+        publicKey : publicKey.substring(0, 4) + "..."
       });
       
       // Update template parameters to match your EmailJS template exactly
