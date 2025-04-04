@@ -223,11 +223,11 @@ const Header: React.FC = () => {
   
   const serviceItemsColumn2 = [
     {
-      href: "/services/ai-chatbot-develpoment",
+      href: "/services/ai-chatbot-developoment",
       icon: <Bot size={20} />,
       title: "AI Chatbots",
       description: "Intelligent assistants",
-      active: pathname === "/services/ai-chatbot-develpoment"
+      active: pathname === "/services/ai-chatbot-developoment"
     },
     {
       href: "/services/seo-performance-optimization",
