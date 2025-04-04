@@ -20,17 +20,18 @@ const FeaturedProjects: React.FC = () => {
         <section className="py-16 px-6 max-w-6xl mx-auto">
 
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-4xl md:text-7xl font-bold text-slate-900">
+                <h1 className="text-3xl md:text-7xl font-bold text-slate-900">
                     Featured{" "}
                     <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                         Projects
                     </span>
                 </h1>
                 <Link href={`/projects`}>
-                <h4 className="text-sm md:text-7xl cursor-pointer hover:text-purple-600 hover:font-semibold hover:underline-offset-2 dark:text-gray-300 flex">
-                    View All
-                    <span className="text-md">→</span>
-                </h4>
+                <div className="text-sm md:text-3xl flex">
+                <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                        {`View All Projects →`}
+                    </span>
+                </div>
                 </Link>
             </div>
 
@@ -54,8 +55,8 @@ const FeaturedProjects: React.FC = () => {
                         </div>
 
                         <div className="p-6">
-                            <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-                            <p className="text-gray-600 dark:text-gray-300 mb-4">
+                            <h3 className="text-xl font-semibold mb-2 dark:text-white">{project.title}</h3>
+                            <p className="text-gray-600 mb-4 dark:text-white">
                                 {project.description}
                             </p>
 
@@ -63,7 +64,7 @@ const FeaturedProjects: React.FC = () => {
                                 {project.techStack.map((tech, index) => (
                                     <span
                                         key={index}
-                                        className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm"
+                                        className="px-3 py-1 bg-gray-100 dark:bg-white rounded-full text-sm"
                                     >
                                         {tech}
                                     </span>
@@ -101,7 +102,7 @@ const FeaturedProjects: React.FC = () => {
                         onClick={() => setCurrentPage(page)}
                         className={`px-4 py-2 rounded-lg transition-colors ${currentPage === page
                             ? 'bg-indigo-500 text-white'
-                            : 'bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600'
+                            : 'bg-gray-200 hover:bg-gray-300 dark:bg-white dark:hover:bg-gray-200'
                             }`}
                     >
                         {page}

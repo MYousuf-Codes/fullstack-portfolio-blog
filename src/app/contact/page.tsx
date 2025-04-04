@@ -3,6 +3,7 @@ import React, { useState, FormEvent, useEffect } from "react";
 import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaCheckCircle, FaChevronDown } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
+import { Link } from "lucide-react";
 
 // EmailJS configuration
 const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '';
@@ -58,12 +59,12 @@ export default function Contact() {
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>({ success: false, message: "" });
   const [useDirectEmail, setUseDirectEmail] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
-  
+
   // Initialize EmailJS
   useEffect(() => {
     try {
       const publicKey = EMAILJS_PUBLIC_KEY;
-      
+
       emailjs.init({
         publicKey: publicKey,
         limitRate: {
@@ -76,27 +77,19 @@ export default function Contact() {
       console.error("EmailJS initialization error:", errorMessage);
     }
   }, []);
-  
-  // Add state for tracking active FAQ
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
-
-  // Toggle FAQ
-  const toggleFaq = (index: number) => {
-    setActiveFaq(activeFaq === index ? null : index);
-  };
 
   // Handle input change with typesafe approach
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
+
     // Update form data, ensuring name is a valid key
-    if (name === 'name' || name === 'email' || name === 'phone' || 
-        name === 'subject' || name === 'message') {
+    if (name === 'name' || name === 'email' || name === 'phone' ||
+      name === 'subject' || name === 'message') {
       setFormData(prev => ({
         ...prev,
         [name]: value
       }));
-      
+
       // Clear error when user starts typing
       if (errors[name]) {
         const newErrors = { ...errors };
@@ -109,31 +102,31 @@ export default function Contact() {
   // Validate form
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     // Name validation
     if (!formData.name.trim()) {
       newErrors.name = "Name is required";
     }
-    
+
     // Email validation
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email address is invalid";
     }
-    
+
     // Subject validation
     if (!formData.subject.trim()) {
       newErrors.subject = "Subject is required";
     }
-    
+
     // Message validation
     if (!formData.message.trim()) {
       newErrors.message = "Message is required";
     } else if (formData.message.length < 10) {
       newErrors.message = "Message must be at least 10 characters";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -141,35 +134,35 @@ export default function Contact() {
   // Handle form submission
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsSubmitting(true);
     setSubmitStatus({ success: false, message: "" }); // Reset status
-    
+
     try {
 
-      const templateId = EMAILJS_TEMPLATE_ID; 
-      const publicKey = EMAILJS_PUBLIC_KEY;   
+      const templateId = EMAILJS_TEMPLATE_ID;
+      const publicKey = EMAILJS_PUBLIC_KEY;
       const serviceId = EMAILJS_SERVICE_ID;
-1
-      console.log("Attempting to send email with:", { 
-        serviceId, 
+      1
+      console.log("Attempting to send email with:", {
+        serviceId,
         templateId,
-        publicKey : publicKey.substring(0, 4) + "..."
+        publicKey: publicKey.substring(0, 4) + "..."
       });
-      
+
       // Update template parameters to match your EmailJS template exactly
       const templateParams = {
         from_name: formData.name,
         to_name: "Website Admin",
-        reply_to: formData.email, 
+        reply_to: formData.email,
         email: formData.email,
         phone: formData.phone || "Not provided",
         subject: formData.subject,
         message: formData.message
       };
-      
+
       console.log("Template parameters:", {
         from_name: templateParams.from_name,
         to_name: templateParams.to_name,
@@ -178,7 +171,7 @@ export default function Contact() {
         subject: templateParams.subject,
         message: `${templateParams.message.substring(0, 20)}...`
       });
-      
+
       // Use a direct try-await with fixed values
       try {
         const result = await emailjs.send(
@@ -187,9 +180,9 @@ export default function Contact() {
           templateParams,
           publicKey
         );
-        
+
         console.log("EmailJS send successful:", result);
-        
+
         if (result.status === 200) {
           setSubmitStatus({
             success: true,
@@ -214,13 +207,13 @@ export default function Contact() {
     } catch (error: unknown) {
       console.error("Form submission error:", error);
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      
+
       // Track failed attempts
       setFailedAttempts(prev => prev + 1);
-      
+
       // Provide more specific guidance based on the error
       let userMessage = `Failed to send your message: ${errorMessage}.`;
-      
+
       if (errorMessage.includes("NetworkError") || errorMessage.includes("Failed to fetch")) {
         userMessage = "Network error: Please check your internet connection and try again.";
       } else if (errorMessage.includes("timeout")) {
@@ -228,7 +221,7 @@ export default function Contact() {
       } else if (errorMessage.includes("rate limit")) {
         userMessage = "Too many messages sent recently. Please wait a moment before trying again.";
       }
-      
+
       setSubmitStatus({
         success: false,
         message: `${userMessage} Alternatively, please contact us directly at ${contactInfo.email} or ${contactInfo.phone}.`
@@ -256,41 +249,6 @@ export default function Contact() {
     setSubmitStatus({ success: false, message: "" });
   };
 
-  // FAQ Data
-  const faqItems = [
-    {
-      question: "What services do you offer?",
-      answer: "We specialize in full-stack web development, custom software solutions, e-commerce platforms, and digital marketing services tailored to your business needs."
-    },
-    {
-      question: "How long does it take to complete a project?",
-      answer: "Project timelines vary based on complexity and requirements. A simple website may just take 1-2 days, while complex applications can take 1-2 weeks. We'll provide a detailed timeline during consultation."
-    },
-    {
-      question: "Do you work with clients internationally?",
-      answer: "Yes, we work with clients globally! Our team has experience collaborating with businesses across different time zones to deliver exceptional results."
-    },
-    {
-      question: "What is your payment structure?",
-      answer: "We typically work with a 50% upfront payment and the remaining 50% upon project completion. For larger projects, we offer milestone-based payment schedules."
-    },
-    {
-      question: "Do you provide ongoing maintenance and support?",
-      answer: "Yes, we offer comprehensive maintenance and support packages to ensure your application runs smoothly after launch. Our team is always available to address any issues or implement new features."
-    },
-    {
-      question: "What technologies do you specialize in?",
-      answer: "We're proficient in a wide range of technologies including React, Next.js, Node.js, TypeScript, Python, Django, MongoDB, PostgreSQL, AWS, and more. We choose the best tech stack for each specific project's requirements."
-    },
-    {
-      question: "Can you work with our existing team?",
-      answer: "Yes, we're experienced in collaborative development. We can seamlessly integrate with your in-house team, providing specialized expertise where needed while maintaining clear communication and workflow alignment."
-    },
-    {
-      question: "Do you offer custom design services?",
-      answer: "Absolutely! Our design team specializes in creating intuitive, visually appealing interfaces customized to your brand. We follow user-centered design principles and conduct usability testing to ensure the best possible user experience."
-    }
-  ];
 
   return (
     <div className="min-h-screen pt-36 pb-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
@@ -304,13 +262,13 @@ export default function Contact() {
         {/* Hero Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            Get in 
+            Get in
             <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               {" "}Touch
             </span>
           </h1>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              {`We'd love to hear from you. Send us a message and we'll respond as soon as possible.`}
+            {`We'd love to hear from you. Send us a message and we'll respond as soon as possible.`}
           </p>
         </div>
 
@@ -320,7 +278,7 @@ export default function Contact() {
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl p-8 shadow-lg h-full">
               <h2 className="text-2xl font-semibold text-slate-900 mb-6">Contact Information</h2>
-              
+
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="text-indigo-600 mt-1">
@@ -331,7 +289,7 @@ export default function Contact() {
                     <p className="text-slate-600">{contactInfo.address}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-4">
                   <div className="text-indigo-600 mt-1">
                     <FaPhone className="w-5 h-5" />
@@ -343,7 +301,7 @@ export default function Contact() {
                     </a>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-4">
                   <div className="text-indigo-600 mt-1">
                     <FaEnvelope className="w-5 h-5" />
@@ -355,7 +313,7 @@ export default function Contact() {
                     </a>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-4">
                   <div className="text-indigo-600 mt-1">
                     <FaClock className="w-5 h-5" />
@@ -366,7 +324,7 @@ export default function Contact() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Map or additional info */}
               <div className="mt-8 pt-8 border-t border-slate-200">
                 <h3 className="font-medium text-slate-900 mb-4">Connect With Us</h3>
@@ -379,19 +337,18 @@ export default function Contact() {
               </div>
             </div>
           </div>
-          
+
           {/* Contact Form */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl p-8 shadow-lg" id="contact-form">
               <h2 className="text-2xl font-semibold text-slate-900 mb-6">Send us a Message</h2>
-              
+
               {submitStatus.message ? (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`p-4 rounded-lg mb-6 flex items-center gap-3 ${
-                    submitStatus.success ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                  }`}
+                  className={`p-4 rounded-lg mb-6 flex items-center gap-3 ${submitStatus.success ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                    }`}
                 >
                   {submitStatus.success ? (
                     <FaCheckCircle className="w-5 h-5 flex-shrink-0" />
@@ -401,7 +358,7 @@ export default function Contact() {
                   <p>{submitStatus.message}</p>
                 </motion.div>
               ) : null}
-              
+
               {/* Show recommendation after multiple failed attempts */}
               {failedAttempts >= 2 && !useDirectEmail && (
                 <motion.div
@@ -411,7 +368,7 @@ export default function Contact() {
                 >
                   <p className="font-medium">Having trouble with the form?</p>
                   <p className="mt-1">We recommend using the direct email method instead. Click the checkbox above to switch methods.</p>
-                  <button 
+                  <button
                     onClick={toggleEmailMethod}
                     className="mt-2 text-blue-700 font-medium underline hover:text-blue-900"
                   >
@@ -419,26 +376,7 @@ export default function Contact() {
                   </button>
                 </motion.div>
               )}
-              
-              {/* Form Method Toggle */}
-              <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="useDirectEmail"
-                    checked={useDirectEmail}
-                    onChange={toggleEmailMethod}
-                    className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  <label htmlFor="useDirectEmail" className="text-sm text-slate-700">
-                    Use direct email method instead
-                  </label>
-                </div>
-                <div className="text-xs text-slate-500">
-                  {useDirectEmail ? 'Using: Direct Email Link' : 'Using: Automated Form Submission'}
-                </div>
-              </div>
-              
+
               {!useDirectEmail ? (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* EmailJS form */}
@@ -455,9 +393,8 @@ export default function Contact() {
                           placeholder={field.placeholder}
                           value={formData[field.id]}
                           onChange={handleChange}
-                          className={`w-full px-4 py-3 rounded-lg border ${
-                            errors[field.id as keyof FormErrors] ? "border-red-300 bg-red-50" : "border-slate-300"
-                          } focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors`}
+                          className={`w-full px-4 py-3 rounded-lg border ${errors[field.id as keyof FormErrors] ? "border-red-300 bg-red-50" : "border-slate-300"
+                            } focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors`}
                         />
                         {errors[field.id as keyof FormErrors] && (
                           <p className="text-red-600 text-sm mt-1">{errors[field.id as keyof FormErrors]}</p>
@@ -465,7 +402,7 @@ export default function Contact() {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label htmlFor="message" className="block text-sm font-medium text-slate-700">
                       Your Message
@@ -477,22 +414,20 @@ export default function Contact() {
                       placeholder="Tell us how we can help you..."
                       value={formData.message}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 rounded-lg border ${
-                        errors.message ? "border-red-300 bg-red-50" : "border-slate-300"
-                      } focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors`}
+                      className={`w-full px-4 py-3 rounded-lg border ${errors.message ? "border-red-300 bg-red-50" : "border-slate-300"
+                        } focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors`}
                     ></textarea>
                     {errors.message && (
                       <p className="text-red-600 text-sm mt-1">{errors.message}</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className={`w-full md:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center ${
-                        isSubmitting ? "opacity-70 cursor-not-allowed" : ""
-                      }`}
+                      className={`w-full md:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition-all duration-300 flex items-center justify-center ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                        }`}
                     >
                       {isSubmitting ? (
                         <>
@@ -529,7 +464,7 @@ export default function Contact() {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="space-y-2">
                     <label htmlFor="direct-message" className="block text-sm font-medium text-slate-700">
                       Your Message
@@ -544,28 +479,29 @@ export default function Contact() {
                       className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors"
                     ></textarea>
                   </div>
-                  
+
                   <div>
-                    <a
+                    <Link
                       href={generateMailtoLink()}
                       className="inline-block w-full md:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition-all duration-300 text-center"
                     >
                       Open Email Client & Send
-                    </a>
+                    </Link>
                   </div>
-                  
+
                   <div className="text-sm text-slate-600 bg-amber-50 p-4 rounded-lg border border-amber-100">
                     <p>This will open your default email application with a pre-filled message. You can review and send directly from your email client.</p>
                   </div>
                 </div>
               )}
-              
+
               <div className="mt-6 pt-6 border-t border-slate-200 text-slate-500 text-sm">
                 <p>
-                  {useDirectEmail ? 
+                  {useDirectEmail ?
                     "This option uses your default email client to send messages directly." :
-                    "This contact form uses EmailJS to securely deliver your message directly to our inbox."
-                  } Your information is never stored in a database and is only used to respond to your inquiry.
+                    "Your information is never stored in a database and is only used to respond to your inquiry."
+                  } 
+                  
                 </p>
                 <p className="mt-2">
                   {`If you encounter any issues with the form, please reach out to us directly via email or phone.`}
@@ -573,71 +509,6 @@ export default function Contact() {
               </div>
             </div>
           </div>
-        </div>
-        
-        {/* FAQ Section */}
-        <div className="mb-20">
-          <h2 className="text-3xl font-bold text-slate-900 text-center mb-12">
-            Frequently Asked Questions
-          </h2>
-          
-          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {faqItems.map((faq, index) => (
-              <div 
-                key={index} 
-                className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
-              >
-                <button 
-                  onClick={() => toggleFaq(index)}
-                  className="w-full p-6 flex justify-between items-center text-left focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white transition-all duration-300 hover:bg-slate-50"
-                >
-                  <div className="flex items-center">
-                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 font-semibold text-sm mr-4 flex-shrink-0">
-                      {index + 1}
-                    </span>
-                    <h3 className="text-xl font-semibold text-slate-900 pr-8">{faq.question}</h3>
-                  </div>
-                  <motion.div
-                    animate={{ rotate: activeFaq === index ? 180 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    className={`text-indigo-600 flex-shrink-0 ${activeFaq === index ? 'text-indigo-800' : ''}`}
-                  >
-                    <FaChevronDown className="w-5 h-5" />
-                  </motion.div>
-                </button>
-                
-                <AnimatePresence>
-                  {activeFaq === index && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="overflow-hidden border-t border-slate-100"
-                    >
-                      <div className="p-6 pt-4 text-slate-600">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* CTA Section */}
-        <div className="text-center bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-12 text-white">
-          <h2 className="text-3xl font-bold mb-6">Ready to Start Your Project?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Contact us today to discuss how we can help bring your vision to life.
-          </p>
-          <a
-            href="#contact-form"
-            className="inline-block bg-white text-indigo-600 px-8 py-4 rounded-full font-semibold hover:bg-opacity-90 transition-colors duration-300"
-          >
-            Get in Touch
-          </a>
         </div>
       </div>
     </div>

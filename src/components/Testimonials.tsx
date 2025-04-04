@@ -5,25 +5,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { testimonials } from '../data/testimonials';
 
-// Company logos
-const companies = [
-  {
-    name: "Google",
-    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-  },
-  {
-    name: "Microsoft",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
-  },
-  {
-    name: "Amazon",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png"
-  },
-  {
-    name: "Meta",
-    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg"
-  }
-];
+// // Company logos
+// const companies = [
+//   {
+//     name: "Google",
+//     logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+//   },
+//   {
+//     name: "Microsoft",
+//     logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
+//   },
+//   {
+//     name: "Amazon",
+//     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png"
+//   },
+//   {
+//     name: "Meta",
+//     logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg"
+//   }
+// ];
 
 const Testimonials: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -167,7 +167,7 @@ const Testimonials: React.FC = () => {
       </div>
       
       {/* Companies Section */}
-      <div className="mt-16">
+      {/* <div className="mt-16">
         <h3 className="text-2xl font-semibold text-center mb-8 text-gray-700 dark:text-gray-300">
           Companies I have Worked With
         </h3>
@@ -188,7 +188,7 @@ const Testimonials: React.FC = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </section>
   );
 };

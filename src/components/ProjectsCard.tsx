@@ -29,8 +29,8 @@ const ProjectsCard: React.FC = () => {
             </div>
 
             <div className="p-6">
-              <h3 className="text-xl text-left font-semibold mb-2">{project.title}</h3>
-              <p className="text-gray-600 text-left dark:text-gray-300 mb-4">
+              <h3 className="text-xl font-semibold text-left mb-2 dark:text-white">{project.title}</h3>
+              <p className="text-gray-600 text-left mb-4 dark:text-white">
                 {project.description}
               </p>
 
@@ -38,7 +38,7 @@ const ProjectsCard: React.FC = () => {
                 {project.techStack.map((tech, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-sm"
+                    className="px-3 py-1 bg-gray-100 dark:bg-white rounded-full text-sm"
                   >
                     {tech}
                   </span>
