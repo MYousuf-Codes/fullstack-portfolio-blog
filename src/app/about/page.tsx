@@ -49,20 +49,20 @@ const teamMembers = [
     name: "Muhammad Yousuf",
     role: "Full-Stack Developer",
     image: "/team/m-yousuf.png",
-    bio: "Expert in cutting-edge tech, Michael ensures we stay ahead of the curve.",
+    bio: "A versatile developer with expertise in latest front-end and back-end technologies, Yousuf is dedicated to delivering high-quality solutions.",
     socials: {
-      github: "https://github.com/myousuf",
-      linkedin: "https://linkedin.com/in/myousuf"
+      github: "https://github.com/myousuf-codes",
+      linkedin: "https://linkedin.com/in/myousuf-codes"
     }
   },
   {
-    name: "Muhammad Yousuf",
-    role: "Full-Stack Developer",
+    name: "Muhammad Younus",
+    role: "AI Agentic Developer",
     image: "/team/m-yousuf.png",
-    bio: "Expert in cutting-edge tech, Michael ensures we stay ahead of the curve.",
+    bio: "Passionate about AI and machine learning, Younus is dedicated to creating intelligent solutions.",
     socials: {
-      github: "https://github.com/myousuf",
-      linkedin: "https://linkedin.com/in/myousuf"
+      github: "https://github.com/myounus-codes",
+      linkedin: "https://linkedin.com/in/myounus-codes"
     }
   },
 ];
@@ -203,48 +203,48 @@ export default function About() {
                     priority
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  
+
                   {/* Social Links Overlay */}
                   <div className="absolute bottom-4 left-0 right-0 flex justify-center items-center gap-4 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
                     {member.socials.fiverr && (
-                      <a
+                      <Link
                         href={member.socials.fiverr}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-white/90 p-2 rounded-full hover:bg-white transition-colors duration-200"
                       >
                         <SiFiverr className="w-8 h-8 text-[#1dbf73]" />
-                      </a>
+                      </Link>
                     )}
                     {member.socials.upwork && (
-                      <a
+                      <Link
                         href={member.socials.upwork}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-white/90 p-2 rounded-full hover:bg-white transition-colors duration-200"
                       >
                         <SiUpwork className="w-8 h-8 text-[#14a800]" />
-                      </a>
+                      </Link>
                     )}
                     {member.socials.github && (
-                      <a
+                      <Link
                         href={member.socials.github}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-white/90 p-2 rounded-full hover:bg-white transition-colors duration-200"
                       >
                         <FaGithub className="w-8 h-8 text-[#333]" />
-                      </a>
+                      </Link>
                     )}
                     {member.socials.linkedin && (
-                      <a
+                      <Link
                         href={member.socials.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-white/90 p-2 rounded-full hover:bg-white transition-colors duration-200"
                       >
                         <FaLinkedin className="w-8 h-8 text-[#0077b5]" />
-                      </a>
+                      </Link>
                     )}
                   </div>
                 </div>
@@ -276,7 +276,7 @@ export default function About() {
               <div className="text-4xl font-bold text-indigo-600 mb-2">50+</div>
               <div className="text-slate-600">Team Members</div>
             </div>
-    <div>
+            <div>
               <div className="text-4xl font-bold text-indigo-600 mb-2">12+</div>
               <div className="text-slate-600">Years Experience</div>
             </div>
@@ -291,14 +291,14 @@ export default function About() {
           <h2 className="text-3xl font-bold text-slate-900 text-center mb-16">
             Why Partner With Us
           </h2>
-          
+
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {whyChooseUsFaqs.map((faq, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
               >
-                <button 
+                <button
                   onClick={() => toggleFaq(index)}
                   className="w-full p-6 flex justify-between items-center text-left focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-white transition-all duration-300 hover:bg-slate-50"
                 >
@@ -316,7 +316,7 @@ export default function About() {
                     <FaChevronDown className="w-5 h-5" />
                   </motion.div>
                 </button>
-                
+
                 <AnimatePresence>
                   {activeFaq === index && (
                     <motion.div
