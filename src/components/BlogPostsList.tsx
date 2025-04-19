@@ -106,14 +106,18 @@ export default function BlogPostsList({ posts, categories }: BlogPostsListProps)
                   )}
                 </div>
                 
-                <h3 className="text-xl font-semibold mb-3 line-clamp-2 text-gray-900 dark:text-white hover:text-indigo-500 transition-colors">
+                <Link href={`/blog/${post.slug.current}`}>
+                <h3 className="text-xl font-semibold mb-3 line-clamp-2 text-gray-900 dark:text-white cursor-pointer hover:text-indigo-500 transition-colors">
                   {post.title}
                 </h3>
-                
+                </Link>
+
+                <Link href={`/blog/${post.slug.current}`}>
                 <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
                   {post.excerpt}
                 </p>
-
+                </Link>
+                
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
                     {post.author.image && (

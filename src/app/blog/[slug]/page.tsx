@@ -10,7 +10,7 @@ import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { PortableTextBlock } from "@portabletext/types";
 import { Metadata } from "next";
 
-// Interfaces
+// Interfaces`
 interface Author {
   _id: string;
   name: string;
@@ -220,7 +220,7 @@ export default async function BlogPost({ params: { slug } }: Props) {
       <div className="min-h-screen pt-36 pb-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl font-bold text-slate-900 mb-4">Post Not Found</h1>
-          <p className="text-xl text-slate-600 mb-8">
+          <p className="text-xl text-slate-600 mb-8 dark:text-black">
             {`The post you're looking for doesn't exist or has been removed.`}
           </p>
           <Link
@@ -259,7 +259,7 @@ export default async function BlogPost({ params: { slug } }: Props) {
             {post.categories.map((category) => (
               <span
                 key={category.title}
-                className="px-4 py-2 bg-indigo-500 text-white rounded-full text-sm font-medium"
+                className="px-4 py-2 bg-indigo-500 text-ba rounded-full text-sm font-medium"
               >
                 {category.title}
               </span>
@@ -321,11 +321,11 @@ export default async function BlogPost({ params: { slug } }: Props) {
         </div>
 
         {/* Content */}
-        <div className="prose prose-lg prose-slate max-w-none mb-16 dark:prose-invert">
+        <div className="prose prose-lg prose-slate max-w-none mb-16 dark:prose-invert dark:text-black">
           {post.body ? (
             <PortableText value={post.body} components={portableTextComponents} />
           ) : (
-            <p className="text-slate-600 dark:text-slate-300">
+            <p className="text-slate-600 dark:text-black">
               No content available for this post.
             </p>
           )}
