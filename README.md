@@ -46,7 +46,7 @@ Modify the app/page.tsx file to customize the homepage. Changes are automaticall
 ---------------
 
 
-✅ **Next.js 14+** – Fast, SEO-friendly, and optimized React framework.
+✅ **Next.js 15** – Fast, SEO-friendly, and optimized React framework.
 
 ✅ **Sanity CMS** – A powerful, real-time content management system.
 
