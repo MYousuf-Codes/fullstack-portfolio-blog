@@ -1,7 +1,7 @@
 **Next.js & Sanity Fullstack Blog**
 ===================================
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [create-next-app](https://nextjs.org/docs/app/api-reference/cli/create-next-app). It is a full-stack blog powered by **Next.js** and **Sanity CMS**, designed for high performance and seamless content management.
+This is a [Next.js](https://nextjs.org) project, [create-next-app](https://nextjs.org/docs/app/api-reference/cli/create-next-app). It is a full-stack blog powered by **Next.js**, **Typescript**, **Tailwind CSS**, and **Sanity CMS**, **EmailJS** and other helpful libraries for high performance and seamless content management with Headless CMS as **Sanity CMS**.
 
 🚀 **Getting Started**
 ----------------------
