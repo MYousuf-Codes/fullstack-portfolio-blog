@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
               </motion.a>
               <motion.a
                 whileHover={{ scale: 1.1 }}
-                href="mailto:contact@myousaf-codes.com"
+                href="mailto:yousufhere.dev@gmail.com"
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <FaEnvelope size={20} />

@@ -1,9 +1,12 @@
 "use client";
 import React, { useState, FormEvent, useEffect } from "react";
-import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaCheckCircle, FaChevronDown } from "react-icons/fa";
+import { FaMapMarkerAlt, FaPhone, FaEnvelope, FaClock, FaCheckCircle} from "react-icons/fa";
+import { FaLinkedin, FaGithub, FaStackOverflow } from 'react-icons/fa';
+import { PiXLogoBold } from 'react-icons/pi';
 import { motion, AnimatePresence } from "framer-motion";
 import emailjs from "@emailjs/browser";
 import { Link } from "lucide-react";
+import { SiFiverr, SiUpwork } from "react-icons/si";
 
 // EmailJS configuration
 const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '';
@@ -158,19 +161,10 @@ export default function Contact() {
         to_name: "Website Admin",
         reply_to: formData.email,
         email: formData.email,
-        phone: formData.phone || "Not provided",
         subject: formData.subject,
+        ...(formData.phone && { phone: formData.phone }),
         message: formData.message
       };
-
-      console.log("Template parameters:", {
-        from_name: templateParams.from_name,
-        to_name: templateParams.to_name,
-        email: templateParams.email,
-        phone: templateParams.phone,
-        subject: templateParams.subject,
-        message: `${templateParams.message.substring(0, 20)}...`
-      });
 
       // Use a direct try-await with fixed values
       try {
@@ -180,8 +174,6 @@ export default function Contact() {
           templateParams,
           publicKey
         );
-
-        console.log("EmailJS send successful:", result);
 
         if (result.status === 200) {
           setSubmitStatus({
@@ -211,7 +203,6 @@ export default function Contact() {
       // Track failed attempts
       setFailedAttempts(prev => prev + 1);
 
-      // Provide more specific guidance based on the error
       let userMessage = `Failed to send your message: ${errorMessage}.`;
 
       if (errorMessage.includes("NetworkError") || errorMessage.includes("Failed to fetch")) {
@@ -326,15 +317,69 @@ export default function Contact() {
               </div>
 
               {/* Map or additional info */}
-              <div className="mt-8 pt-8 border-t border-slate-200">
-                <h3 className="font-medium text-slate-900 mb-4">Connect With Us</h3>
-                <p className="text-slate-600 mb-4">
-                  Follow us on social media to stay updated with our latest projects and announcements.
-                </p>
-                <div className="flex gap-4">
-                  {/* Social icons can be added here */}
+                <div className="mt-8 pt-8 border-t border-slate-200">
+                  <h3 className="font-semibold text-slate-900 text-lg mb-4">Connect With Us</h3>
+                  <p className="text-slate-600 mb-4">
+                    Follow us on social media to stay updated with our latest projects and announcements.
+                  </p>
+                  <div className="flex items-center gap-4 text-slate-400">
+                    <a
+                      href="https://www.linkedin.com/in/myousuf-codes/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="LinkedIn"
+                      className="hover:text-blue-800 transition-colors duration-200"
+                    >
+                      <FaLinkedin className="w-6 h-6" />
+                    </a>
+                    <a
+                      href="https://x.com/myousaf_codes"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="X (Twitter)"
+                      className="hover:text-black transition-colors duration-200"
+                    >
+                      <PiXLogoBold className="w-6 h-6" />
+                    </a>
+                    <a
+                      href="https://www.fiverr.com/yousaf_codes?public_mode=true"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Fiverr"
+                      className="hover:text-green-500 transition-colors duration-200"
+                    >
+                      <SiFiverr className="w-10 h-10" />
+                    </a>
+                    <a
+                      href="https://www.upwork.com/freelancers/~01c98ab5f3a9ac4c0e"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Upwork"
+                      className="hover:text-black transition-colors duration-200"
+                    >
+                      <SiUpwork className="w-8 h-8" />
+                    </a>
+                    <a
+                      href="https://github.com/myousuf-codes"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="GitHub"
+                      className="hover:text-gray-900 transition-colors duration-200"
+                    >
+                      <FaGithub className="w-6 h-6" />
+                    </a>
+                    <a
+                      href="https://stackoverflow.com/users/22482042/muhammad-yousaf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Stack Overflow"
+                      className="hover:text-orange-500 transition-colors duration-200"
+                    >
+                      <FaStackOverflow className="w-6 h-6" />
+                    </a>
+                  </div>
                 </div>
-              </div>
+
             </div>
           </div>
 
@@ -444,6 +489,7 @@ export default function Contact() {
                   </div>
                 </form>
               ) : (
+
                 /* Direct Email Form */
                 <div className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-6">
