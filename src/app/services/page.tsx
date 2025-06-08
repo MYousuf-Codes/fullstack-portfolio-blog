@@ -19,13 +19,13 @@ const ServicesPage = () => {
             title: "AI Chatbot Development",
             description: "Custom AI-powered chatbots for enhanced customer engagement.",
             icon: <Bot className="w-full h-full" />,
-            link: "/services/ai-chatbot"
+            link: "/services/ai-chatbot-developoment"
         },
         {
             title: "Performance Optimization",
             description: "Data-driven insights and performance optimization services.",
             icon: <BarChart className="w-full h-full" />,
-            link: "/services/analytics"
+            link: "/services/seo-performance-optimization"
         }
     ];
 
