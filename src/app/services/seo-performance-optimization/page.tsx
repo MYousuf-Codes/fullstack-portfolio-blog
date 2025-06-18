@@ -3,7 +3,6 @@ import { Search, BarChart2, Target, Rocket, Activity, RefreshCw } from 'lucide-r
 import { motion } from 'framer-motion';
 import { BarChart, Gauge, TrendingUp, LineChart } from 'lucide-react';
 import CTAGetStarted from '@/components/CTAGetStarted';
-import PricingCard from '@/components/PricingCard';
 
 const PerformanceOptimization = () => {
     const features = [
@@ -97,7 +96,7 @@ const PerformanceOptimization = () => {
                         </span>
                     </h1>
                     <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-                        Boost your website's visibility and performance with our optimization services
+                        {`Boost your website's visibility and performance with our optimization services`}
                     </p>
                 </div>
 
