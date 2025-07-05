@@ -1,4 +1,3 @@
-import { projects } from '@/data/projects';
 import ProjectCard from '@/components/ProjectsCard';
 
 const Projects = () => {

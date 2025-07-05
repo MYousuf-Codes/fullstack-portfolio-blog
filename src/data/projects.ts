@@ -11,15 +11,24 @@ export interface Project {
 export const projects: Project[] = [
   {
     id: 1,
+    title: "Upwork Agency Portfolio",
+    description: "A professional portfolio website for an Upwork agency, showcasing services, team members, and client testimonials. Private Repo",
+    techStack: ["Next.js", "TypeScript", "TailwindCSS", "ShadCn UI", "Sanity"],
+    githubUrl: "https://github.com/MYousuf-Codes/",
+    liveUrl: "https://techotics.co/",
+    imageUrl: "/images/upwork.png"
+  },
+  {
+    id: 2,
     title: "Full-Stack CRM for ISP",
-    description: "A full-stack CRM for ISP to manage customers, orders, activations, and support requests.",
+    description: "A full-stack CRM for ISP to manage customers, orders, activations, and support requests. Private Repo",
     techStack: ["Next.js", "TypeScript", "TailwindCSS", "ShadCn UI",  "PostgreSQL", "Auth.js", "Stripe"],
     githubUrl: "https://github.com/myousuf-codes",
     liveUrl: "https://wancom-accounts-isp.vercel.app/",
     imageUrl: "/images/crm.png"
   },
   {
-    id: 2,
+    id: 3,
     title: "Figma to Full-Stack E-Commerce",
     description: "A full-stack E-commerce platform with user authentication, product management, and payment integration.",
     techStack: ["Next.js", "TypeScript", "TailwindCSS", "Sanity", "ShadCn UI", "Auth.js", "Stripe"],
@@ -29,15 +38,6 @@ export const projects: Project[] = [
   },
   {
     id: 4,
-    title: "Figma to E-commerce",
-    description: "Figma design to Fully-Functional E-commerce website",
-    techStack: ["Next.js", "TypeScript", "TailwindCSS", "ShadCn UI", "Redux Toolkit", "Sanity"],
-    githubUrl: "https://github.com/MYousuf-Codes/tech-blog",
-    liveUrl: "https://mytech-blog.vercel.app/",
-    imageUrl: "/images/blog.png"
-  },
-  {
-    id: 3,
     title: "Full-Stack Blog",
     description: "A blog platform with sanity integration, post management, and comment system.",
     techStack: ["Next.js", "TypeScript", "TailwindCSS", "ShadCn UI", "Redux Toolkit", "Sanity"],
