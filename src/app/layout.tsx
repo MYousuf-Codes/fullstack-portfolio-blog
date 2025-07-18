@@ -3,11 +3,12 @@ import Script from "next/script";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Chatbot from "@/components/ChatBot";
 
 export const metadata: Metadata = {
-  title: "MYousuf Codes | Developer & Blogger",
+  title: "MYousuf Codes | Full-Stack | Agentic AI | Developer & Blogger",
   description:
-    "Welcome to MYousuf Codes — my portfolio and blog by a professional full-stack web developer. Explore expert insights on web development, programming tutorials, and projects built with Next.js, React, Tailwind CSS, and Sanity. Let's build the web, one line of code at a time.",
+    "Welcome to MYousuf Codes — a portfolio and blog by a professional full-stack web developer. Explore expert insights on web development, programming tutorials, and projects built with Next.js, React, Tailwind CSS, and Sanity. Let's build the web, one line of code at a time.",
   verification: {
     google: "s9faGWURF6VDwYE3r0NexHCUTcie24oCK_9SY2ARfxM",
   },
@@ -48,6 +49,7 @@ export default function RootLayout({
       <body className="antialiased bg-background text-foreground">
         <Header />
         {children}
+        <Chatbot />
         <Footer />
       </body>
     </html>
