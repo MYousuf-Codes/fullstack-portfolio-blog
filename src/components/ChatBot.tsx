@@ -390,9 +390,8 @@ const ChatbotWidget = () => {
     setShowFAQs(false);
 
     try {
-      // Railway deployment URL - updated to match your FastAPI backend
       const response = await fetch(
-        "https://personal-chatbot-production.up.railway.app/chat",
+        `${process.env.NEXT_PUBLIC_CHATBOT_API_URL}/chat`,
         {
           method: "POST",
           headers: {
@@ -599,26 +598,31 @@ const ChatbotWidget = () => {
         </button>
       </div>
 
-      {/* Enhanced Chat Container */}
+      {/* Enhanced Responsive Chat Container */}
       {isOpen && (
         <div
           className={`fixed flex flex-col bg-white rounded-2xl shadow-2xl border-2 border-purple-100 transition-all duration-300 backdrop-blur-lg pointer-events-auto ${
             // Mobile: Full width with margins, proper height
-            "bottom-24 right-4 left-4 h-[500px] max-h-[calc(100vh-8rem)] " +
-            // Small mobile: Slightly smaller
-            "xs:right-6 xs:left-6 xs:h-[480px] " +
-            // Tablet: Fixed width, positioned right
-            "sm:left-auto sm:right-6 sm:w-[360px] sm:h-[520px] " +
-            // Medium tablet: Optimal size
-            "md:w-[380px] md:h-[540px] md:right-8 " +
-            // Large screens: Maximum comfortable size with better positioning
-            "lg:w-[400px] lg:h-[560px] lg:right-10 lg:bottom-28 " +
-            "xl:w-[420px] xl:h-[580px] xl:right-12 " +
-            "2xl:w-[440px] 2xl:h-[600px] 2xl:right-16 " +
-            // Minimized state
-            (isMinimized ? "md:h-16 lg:h-18" : "")
+            "bottom-20 right-3 left-3 h-[450px] max-h-[calc(100vh-6rem)] " +
+            // Small mobile (480px+): Slightly better spacing
+            "xs:right-4 xs:left-4 xs:bottom-22 xs:h-[470px] " +
+            // Large mobile/Small tablet (640px+): Start transitioning to fixed width
+            "sm:left-auto sm:right-4 sm:w-[340px] sm:h-[480px] sm:bottom-24 " +
+            // Medium tablet (768px+): Comfortable tablet size
+            "md:w-[350px] md:h-[500px] md:right-6 md:bottom-26 " +
+            // Large tablet (1024px+): Reduce size for better desktop feel
+            "lg:w-[320px] lg:h-[460px] lg:right-8 lg:bottom-28 " +
+            // Laptop (1280px+): Optimized for laptop screens - smaller and more compact
+            "xl:w-[370px] xl:h-[460px] xl:right-10 xl:bottom-24 " +
+            // Desktop (1536px+): Slightly larger but still compact
+            "2xl:w-[320px] 2xl:h-[440px] 2xl:right-12 2xl:bottom-26 " +
+            // Ultra-wide (1920px+): Maximum size for very large screens
+            "3xl:w-[340px] 3xl:h-[460px] 3xl:right-16 3xl:bottom-28 " +
+            // Minimized state - responsive heights
+            (isMinimized ? "h-12 sm:h-14 md:h-16 lg:h-14 xl:h-12 2xl:h-14" : "")
           }`}
         >
+          {" "}
           {/* Enhanced Header */}
           <div className="bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 text-white p-4 flex items-center justify-between flex-shrink-0 rounded-t-2xl shadow-lg">
             <div className="flex items-center space-x-3">
@@ -656,7 +660,6 @@ const ChatbotWidget = () => {
               </button>
             </div>
           </div>
-
           {/* Messages Area - Hidden when minimized */}
           {!isMinimized && (
             <>
