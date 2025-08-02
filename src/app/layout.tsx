@@ -6,9 +6,9 @@ import Footer from "@/components/Footer";
 import Chatbot from "@/components/ChatBot";
 
 export const metadata: Metadata = {
-  title: "MYousuf Codes | Full-Stack | Agentic AI | Developer & Blogger",
+  title: "MYousaf Codes | Full-Stack | Agentic AI | Developer & Blogger",
   description:
-    "Welcome to MYousuf Codes — a portfolio and blog by a professional full-stack web developer. Explore expert insights on web development, programming tutorials, and projects built with Next.js, React, Tailwind CSS, and Sanity. Let's build the web, one line of code at a time.",
+    "Welcome to MYousaf Codes — a portfolio and blog by a professional full-stack web developer. Explore expert insights on web development, programming tutorials, and projects built with Next.js, React, Tailwind CSS, and Sanity. Let's build the web, one line of code at a time.",
   verification: {
     google: "s9faGWURF6VDwYE3r0NexHCUTcie24oCK_9SY2ARfxM",
   },

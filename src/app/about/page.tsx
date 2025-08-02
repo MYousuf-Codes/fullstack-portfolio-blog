@@ -41,7 +41,6 @@ const teamMembers = [
     image: "/team/abdul-rauf.png",
     bio: "With 15+ years in digital innovation, Sarah leads our vision for the future.",
     socials: {
-      fiverr: "https://www.fiverr.com/yousaf_codes?public_mode=true",
       upwork: "https://www.upwork.com/freelancers/~01c98ab5f3a9ac4c0e"
     }
   },
@@ -51,6 +50,7 @@ const teamMembers = [
     image: "/team/m-yousuf.png",
     bio: "A versatile developer with expertise in latest front-end and back-end technologies, Yousuf is dedicated to delivering high-quality solutions.",
     socials: {
+      fiverr: "https://www.fiverr.com/yousaf_codes",
       github: "https://github.com/myousuf-codes",
       linkedin: "https://linkedin.com/in/myousuf-codes"
     }
