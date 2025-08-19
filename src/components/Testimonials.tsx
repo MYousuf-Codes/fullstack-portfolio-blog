@@ -5,26 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { testimonials } from '../data/testimonials';
 
-// // Company logos
-// const companies = [
-//   {
-//     name: "Google",
-//     logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
-//   },
-//   {
-//     name: "Microsoft",
-//     logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg"
-//   },
-//   {
-//     name: "Amazon",
-//     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Amazon_icon.svg/2500px-Amazon_icon.svg.png"
-//   },
-//   {
-//     name: "Meta",
-//     logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg"
-//   }
-// ];
-
 const Testimonials: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -165,30 +145,6 @@ const Testimonials: React.FC = () => {
           <FaChevronRight className="text-indigo-500" size={20} />
         </button>
       </div>
-      
-      {/* Companies Section */}
-      {/* <div className="mt-16">
-        <h3 className="text-2xl font-semibold text-center mb-8 text-gray-700 dark:text-gray-300">
-          Companies I have Worked With
-        </h3>
-        
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-          {companies.map((company, index) => (
-            <div 
-              key={index} 
-              className="w-24 h-24 md:w-32 md:h-32 relative grayscale hover:grayscale-0 transition-all duration-300 filter hover:drop-shadow-md"
-            >
-              <Image
-                src={company.logo}
-                alt={company.name}
-                fill
-                className="object-contain p-2"
-                sizes="(max-width: 768px) 96px, 128px"
-              />
-            </div>
-          ))}
-        </div>
-      </div> */}
     </section>
   );
 };
