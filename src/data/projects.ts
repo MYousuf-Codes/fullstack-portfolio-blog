@@ -36,17 +36,17 @@ export const projects: Project[] = [
     liveUrl: "https://static-interactive-resmue.vercel.app/resume.html",
     imageUrl: "/images/resume-builder.png"
   },
-  // {
-  //   id: 4,
-  //   title: "TechOtics | Upwork Agency Website",
-  //   description: "Service Website developed for the international Upwork Agency. Private Repo",
-  //   techStack: ["Next.js", "TypeScript", "Tailwind CSS", "ShadCn UI", "Sanity"],
-  //   githubUrl: "",
-  //   liveUrl: "https://techotics.co/",
-  //   imageUrl: "/images/upwork.png"
-  // },
   {
     id: 4,
+    title: "TechOtics | Upwork Agency Website",
+    description: "Service Website developed for the international Upwork Agency. Private Repo",
+    techStack: ["Next.js", "TypeScript", "Tailwind CSS", "ShadCn UI", "Sanity"],
+    githubUrl: "",
+    liveUrl: "https://techotics.co/",
+    imageUrl: "/images/upwork.png"
+  },
+  {
+    id: 5,
     title: "Full-Stack Blog",
     description: "A blog platform with sanity integration, post management, and comment system.",
     techStack: ["Next.js", "TypeScript", "TailwindCSS", "ShadCn UI", "Redux Toolkit", "Sanity"],

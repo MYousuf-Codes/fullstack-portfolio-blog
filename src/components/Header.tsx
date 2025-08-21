@@ -306,7 +306,6 @@ const Header: React.FC = () => {
                     >
                       <motion.div 
                         className="w-full rounded-lg p-4 shadow-lg bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-200 dark:border-gray-700"
-                        variants={dropdownVariants}
                         initial="hidden"
                         animate="visible"
                         exit="exit"
@@ -364,7 +363,6 @@ const Header: React.FC = () => {
                     >
                       <motion.div 
                         className="w-full rounded-lg p-4 shadow-lg bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-200 dark:border-gray-700"
-                        variants={dropdownVariants}
                         initial="hidden"
                         animate="visible"
                         exit="exit"

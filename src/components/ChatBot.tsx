@@ -22,6 +22,9 @@ import {
   BookOpen,
   GraduationCap,
   HelpCircle,
+  Copy,
+  Check,
+  RefreshCw,
 } from "lucide-react";
 
 // Define the Message type with enhanced features
@@ -32,6 +35,7 @@ interface Message {
   timestamp: Date;
   actions?: ActionButton[];
   quickReplies?: string[];
+  isTyping?: boolean;
 }
 
 // Define the ActionButton type
@@ -57,6 +61,7 @@ const ChatbotWidget = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showFAQs, setShowFAQs] = useState<boolean>(true);
+  const [copiedMessageId, setCopiedMessageId] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Animated Toggle States
@@ -69,11 +74,11 @@ const ChatbotWidget = () => {
     "Chat with me! 💬",
     "Need any help? 🤔",
     "AI Assistant here! 🤖",
-    "Have questions? Ask! ❓",
+    "Have questions? Ask now!",
     "Let's connect! ✨",
   ];
 
-  // Enhanced FAQ Questions
+  // FAQ Questions
   const priorityFAQs: FAQ[] = [
     {
       question: "What's MYousuf's background?",
@@ -155,26 +160,34 @@ const ChatbotWidget = () => {
     "external-link": ExternalLink,
   };
 
-  // Function to render markdown text with proper formatting
+  // Enhanced markdown renderer with better formatting
   const renderMarkdownText = (text: string) => {
-    // Split text into parts and process each part
     const parts = [];
     let currentIndex = 0;
     let partKey = 0;
+
+    // Process code blocks first ```code```
+    const codeBlockRegex = /```([\s\S]*?)```/g;
+    const inlineCodeRegex = /`([^`]+)`/g;
+    
+    // Replace code blocks temporarily
+    const codeBlocks: string[] = [];
+    let tempText = text.replace(codeBlockRegex, (match, code) => {
+      codeBlocks.push(code.trim());
+      return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
+    });
 
     // Process bold text **text**
     const boldRegex = /\*\*(.*?)\*\*/g;
     let match: RegExpExecArray | null;
 
-    while ((match = boldRegex.exec(text)) !== null) {
-      // Add text before the match
+    while ((match = boldRegex.exec(tempText)) !== null) {
       if (match.index > currentIndex) {
-        const beforeText = text.slice(currentIndex, match.index);
-        parts.push(...processLinksAndText(beforeText, partKey));
+        const beforeText = tempText.slice(currentIndex, match.index);
+        parts.push(...processLinksAndCode(beforeText, partKey, codeBlocks));
         partKey++;
       }
 
-      // Add bold text
       parts.push(
         <strong key={`bold-${partKey}`} className="font-semibold text-gray-900">
           {match[1]}
@@ -184,41 +197,119 @@ const ChatbotWidget = () => {
       currentIndex = match.index + match[0].length;
     }
 
-    // Add remaining text
-    if (currentIndex < text.length) {
-      const remainingText = text.slice(currentIndex);
-      parts.push(...processLinksAndText(remainingText, partKey));
+    if (currentIndex < tempText.length) {
+      const remainingText = tempText.slice(currentIndex);
+      parts.push(...processLinksAndCode(remainingText, partKey, codeBlocks));
     }
 
     return parts;
   };
 
-  // Function to process links and regular text
-  const processLinksAndText = (text: string, startKey: number) => {
+  // Enhanced function to process links and code
+  const processLinksAndCode = (text: string, startKey: number, codeBlocks: string[]) => {
     const parts = [];
     let currentIndex = 0;
     let partKey = startKey;
 
-    // Process markdown links [text](url)
+    // Process code blocks
+    const codeBlockPattern = /__CODE_BLOCK_(\d+)__/g;
+    let match: RegExpExecArray | null;
+
+    while ((match = codeBlockPattern.exec(text)) !== null) {
+      if (match.index > currentIndex) {
+        const beforeText = text.slice(currentIndex, match.index);
+        parts.push(...processLinks(beforeText, partKey));
+        partKey++;
+      }
+
+      const blockIndex = parseInt(match[1]);
+      const codeContent = codeBlocks[blockIndex];
+      
+      parts.push(
+        <div key={`codeblock-${partKey}`} className="my-2 relative group">
+          <pre className="bg-gray-900 text-green-400 p-3 rounded-lg text-xs overflow-x-auto border border-gray-700">
+            <code>{codeContent}</code>
+          </pre>
+          <button
+            onClick={() => copyToClipboard(codeContent, -1)}
+            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 bg-gray-700 hover:bg-gray-600 rounded text-gray-300 hover:text-white"
+          >
+            <Copy className="w-3 h-3" />
+          </button>
+        </div>
+      );
+      
+      partKey++;
+      currentIndex = match.index + match[0].length;
+    }
+
+    if (currentIndex < text.length) {
+      const remainingText = text.slice(currentIndex);
+      parts.push(...processLinks(remainingText, partKey));
+    }
+
+    return parts;
+  };
+
+  // Process inline code and links
+  const processLinks = (text: string, startKey: number) => {
+    const parts = [];
+    let currentIndex = 0;
+    let partKey = startKey;
+
+    // Process inline code first
+    const inlineCodeRegex = /`([^`]+)`/g;
+    let match: RegExpExecArray | null;
+
+    while ((match = inlineCodeRegex.exec(text)) !== null) {
+      if (match.index > currentIndex) {
+        const beforeText = text.slice(currentIndex, match.index);
+        parts.push(...processLinksOnly(beforeText, partKey));
+        partKey++;
+      }
+
+      parts.push(
+        <code key={`code-${partKey}`} className="bg-gray-100 text-purple-700 px-1.5 py-0.5 rounded text-xs font-mono border">
+          {match[1]}
+        </code>
+      );
+      partKey++;
+      currentIndex = match.index + match[0].length;
+    }
+
+    if (currentIndex < text.length) {
+      const remainingText = text.slice(currentIndex);
+      parts.push(...processLinksOnly(remainingText, partKey));
+    }
+
+    return parts;
+  };
+
+  // Process only markdown links
+  const processLinksOnly = (text: string, startKey: number) => {
+    const parts = [];
+    let currentIndex = 0;
+    let partKey = startKey;
+
     const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
     let match: RegExpExecArray | null;
 
     while ((match = linkRegex.exec(text)) !== null) {
-      // Add text before the match
       if (match.index > currentIndex) {
         const beforeText = text.slice(currentIndex, match.index);
-        parts.push(<span key={`text-${partKey}`}>{beforeText}</span>);
-        partKey++;
+        if (beforeText.trim()) {
+          parts.push(<span key={`text-${partKey}`}>{beforeText}</span>);
+          partKey++;
+        }
       }
 
-      // Add clickable link
       parts.push(
         <a
           key={`link-${partKey}`}
           href={match[2]}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:text-blue-800 font-medium hover:underline cursor-pointer transition-colors duration-200"
+          className="text-blue-600 hover:text-blue-800 font-medium hover:underline cursor-pointer transition-colors duration-200 inline-flex items-center gap-1"
           onClick={(e) => {
             e.preventDefault();
             if (match) {
@@ -227,13 +318,13 @@ const ChatbotWidget = () => {
           }}
         >
           {match[1]}
+          <ExternalLink className="w-3 h-3" />
         </a>
       );
       partKey++;
       currentIndex = match.index + match[0].length;
     }
 
-    // Add remaining text
     if (currentIndex < text.length) {
       const remainingText = text.slice(currentIndex);
       if (remainingText.trim()) {
@@ -244,48 +335,80 @@ const ChatbotWidget = () => {
     return parts;
   };
 
-  // Function to render message content with proper formatting
+  // Enhanced message content renderer
   const renderMessageContent = (text: string) => {
-    // Split by lines to handle line breaks
     const lines = text.split("\n");
+    const processedLines = [];
+    let inList = false;
+    let listItems = [];
 
-    return lines.map((line, lineIndex) => {
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
       if (!line.trim()) {
-        return <br key={`br-${lineIndex}`} />;
+        if (inList) {
+          processedLines.push(
+            <ul key={`list-${i}`} className="my-2 ml-4 space-y-1">
+              {listItems}
+            </ul>
+          );
+          listItems = [];
+          inList = false;
+        }
+        processedLines.push(<br key={`br-${i}`} />);
+        continue;
       }
 
       // Handle bullet points
       if (line.trim().startsWith("- ")) {
         const bulletText = line.trim().substring(2);
-        return (
-          <div
-            key={`bullet-${lineIndex}`}
-            className="flex items-start gap-2 my-1"
-          >
-            <span className="text-purple-600 font-bold text-sm mt-0.5">•</span>
-            <span className="flex-1 text-sm">
+        listItems.push(
+          <li key={`bullet-${i}`} className="flex items-start gap-2">
+            <span className="text-purple-600 font-bold text-sm mt-0.5 flex-shrink-0">•</span>
+            <span className="flex-1 text-sm leading-relaxed">
               {renderMarkdownText(bulletText)}
             </span>
-          </div>
+          </li>
         );
+        inList = true;
+        continue;
       }
 
       // Handle numbered lists
       const numberedMatch = line.match(/^(\d+)\.\s+(.+)/);
       if (numberedMatch) {
-        return (
-          <div
-            key={`numbered-${lineIndex}`}
-            className="flex items-start gap-2 my-1"
-          >
-            <span className="text-purple-600 font-semibold text-sm min-w-[20px]">
+        if (inList && listItems.length > 0) {
+          processedLines.push(
+            <ul key={`list-${i}`} className="my-2 ml-4 space-y-1">
+              {listItems}
+            </ul>
+          );
+          listItems = [];
+        }
+        
+        listItems.push(
+          <li key={`numbered-${i}`} className="flex items-start gap-2">
+            <span className="text-purple-600 font-semibold text-sm min-w-[20px] flex-shrink-0">
               {numberedMatch[1]}.
             </span>
-            <span className="flex-1 text-sm">
+            <span className="flex-1 text-sm leading-relaxed">
               {renderMarkdownText(numberedMatch[2])}
             </span>
-          </div>
+          </li>
         );
+        inList = true;
+        continue;
+      }
+
+      // Flush any pending list items
+      if (inList) {
+        processedLines.push(
+          <ul key={`list-${i}`} className="my-2 ml-4 space-y-1">
+            {listItems}
+          </ul>
+        );
+        listItems = [];
+        inList = false;
       }
 
       // Handle headers
@@ -296,26 +419,62 @@ const ChatbotWidget = () => {
           const text = headerMatch[2];
           const className =
             level === 1
-              ? "text-lg font-bold text-gray-900 mt-3 mb-2"
+              ? "text-lg font-bold text-gray-900 mt-4 mb-2 border-b border-gray-200 pb-1"
               : level === 2
-                ? "text-base font-bold text-gray-800 mt-2 mb-1"
-                : "text-sm font-semibold text-gray-700 mt-1 mb-1";
+                ? "text-base font-bold text-gray-800 mt-3 mb-2"
+                : "text-sm font-semibold text-gray-700 mt-2 mb-1";
 
-          return (
-            <div key={`header-${lineIndex}`} className={className}>
+          processedLines.push(
+            <div key={`header-${i}`} className={className}>
               {renderMarkdownText(text)}
             </div>
           );
+          continue;
         }
       }
 
+      // Handle blockquotes
+      if (line.startsWith("> ")) {
+        const quoteText = line.substring(2);
+        processedLines.push(
+          <blockquote key={`quote-${i}`} className="border-l-4 border-purple-300 pl-4 my-2 italic text-gray-700 bg-purple-50 py-2 rounded-r">
+            <div className="text-sm leading-relaxed">
+              {renderMarkdownText(quoteText)}
+            </div>
+          </blockquote>
+        );
+        continue;
+      }
+
       // Regular paragraph
-      return (
-        <div key={`line-${lineIndex}`} className="text-sm leading-relaxed my-1">
+      processedLines.push(
+        <div key={`line-${i}`} className="text-sm leading-relaxed my-1">
           {renderMarkdownText(line)}
         </div>
       );
-    });
+    }
+
+    // Flush any remaining list items
+    if (inList && listItems.length > 0) {
+      processedLines.push(
+        <ul key={`final-list`} className="my-2 ml-4 space-y-1">
+          {listItems}
+        </ul>
+      );
+    }
+
+    return processedLines;
+  };
+
+  // Copy to clipboard function
+  const copyToClipboard = async (text: string, messageId: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedMessageId(messageId);
+      setTimeout(() => setCopiedMessageId(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
   };
 
   // Typewriter effect for animated toggle
@@ -359,7 +518,7 @@ const ChatbotWidget = () => {
         {
           id: 1,
           sender: "bot",
-          text: "👋 Hi! I'm MYousuf's AI assistant. I can help you learn about his work, projects, and expertise. Ask me anything or click the suggestions below!",
+          text: "👋 Hi! I'm MYousuf's AI assistant. I can help you with his work, projects, and expertise. Ask me anything or click the suggestions below!",
           timestamp: new Date(),
           quickReplies: ["Show projects", "Contact details", "What services?"],
         },
@@ -371,10 +530,8 @@ const ChatbotWidget = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Enhanced message sending with action support
-  const sendMessage = async (
-    messageText: string = inputValue
-  ): Promise<void> => {
+  // Enhanced message sending with typing animation
+  const sendMessage = async (messageText: string = inputValue): Promise<void> => {
     if (!messageText.trim()) return;
 
     const userMessage: Message = {
@@ -388,6 +545,7 @@ const ChatbotWidget = () => {
     setInputValue("");
     setIsLoading(true);
     setShowFAQs(false);
+    
 
     try {
       const response = await fetch(
@@ -407,41 +565,47 @@ const ChatbotWidget = () => {
 
       const data = await response.json();
 
-      const botMessage: Message = {
-        id: Date.now() + 1,
-        sender: "bot",
-        text:
-          data.response ||
-          "I apologize, but I encountered an error processing your request.",
-        timestamp: new Date(),
-        actions: data.actions || [],
-        quickReplies: data.quick_replies || [],
-      };
-
-      setMessages((prev) => [...prev, botMessage]);
+      // Remove typing indicator and add real response
+      setMessages((prev) => {
+        const withoutTyping = prev.filter(msg => !msg.isTyping);
+        const botMessage: Message = {
+          id: Date.now() + 1,
+          sender: "bot",
+          text:
+            data.response ||
+            "I apologize, but I encountered an error processing your request.",
+          timestamp: new Date(),
+          actions: data.actions || [],
+          quickReplies: data.quick_replies || [],
+        };
+        return [...withoutTyping, botMessage];
+      });
     } catch (error) {
       console.error("Error sending message:", error);
-      const errorMessage: Message = {
-        id: Date.now() + 1,
-        sender: "bot",
-        text: "❌ Sorry, I'm having trouble connecting. Please try again or contact directly through the portfolio.",
-        timestamp: new Date(),
-        actions: [
-          {
-            type: "navigate",
-            label: "📧 Contact Page",
-            page: "/contact",
-            icon: "mail",
-          },
-          {
-            type: "email",
-            label: "✉️ Send Email",
-            url: "mailto:yousufhere.dev@gmail.com",
-            icon: "mail",
-          },
-        ],
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => {
+        const withoutTyping = prev.filter(msg => !msg.isTyping);
+        const errorMessage: Message = {
+          id: Date.now() + 1,
+          sender: "bot",
+          text: "⚠️ Sorry, I'm having trouble connecting. Please try again or contact directly through the portfolio.",
+          timestamp: new Date(),
+          actions: [
+            {
+              type: "navigate",
+              label: "📧 Contact Page",
+              page: "/contact",
+              icon: "mail",
+            },
+            {
+              type: "email",
+              label: "✉️ Send Email",
+              url: "mailto:yousufhere.dev@gmail.com",
+              icon: "mail",
+            },
+          ],
+        };
+        return [...withoutTyping, errorMessage];
+      });
     } finally {
       setIsLoading(false);
     }
@@ -452,7 +616,6 @@ const ChatbotWidget = () => {
     switch (action.type) {
       case "navigate":
         if (action.page) {
-          // For Next.js routing, use window.location or your preferred router
           window.location.href = action.page;
         }
         break;
@@ -481,7 +644,9 @@ const ChatbotWidget = () => {
 
   const toggleChat = (): void => {
     setIsOpen(!isOpen);
-    setIsMinimized(false);
+    if (!isOpen) {
+      setIsMinimized(false); // Always expand when opening
+    }
     if (isOpen) {
       setShowMessage(false);
     }
@@ -497,11 +662,30 @@ const ChatbotWidget = () => {
     setDisplayFAQs(getRandomFAQs());
   };
 
+  const regenerateResponse = async () => {
+    if (messages.length < 2) return;
+    
+    const lastUserMessage = messages.find(msg => msg.sender === "user");
+    if (!lastUserMessage) return;
+
+    // Remove the last bot message
+    setMessages(prev => {
+      const lastBotIndex = prev.map(msg => msg.sender).lastIndexOf("bot");
+      if (lastBotIndex !== -1) {
+        return prev.slice(0, lastBotIndex);
+      }
+      return prev;
+    });
+
+    // Resend the last user message
+    await sendMessage(lastUserMessage.text);
+  };
+
   const formatTime = (date: Date): string => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
-  // Render enhanced action buttons
+  // Enhanced action buttons renderer
   const renderActionButtons = (actions: ActionButton[]) => {
     if (!actions || actions.length === 0) return null;
 
@@ -516,7 +700,7 @@ const ChatbotWidget = () => {
             <button
               key={index}
               onClick={() => handleAction(action)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white text-xs rounded-full transition-all duration-200 hover:scale-105 shadow-md hover:shadow-lg"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white text-xs rounded-full transition-all duration-200 hover:scale-105 shadow-md hover:shadow-lg transform"
             >
               <IconComponent className="w-3 h-3" />
               <span className="font-medium">{action.label}</span>
@@ -527,7 +711,7 @@ const ChatbotWidget = () => {
     );
   };
 
-  // Render quick reply buttons
+  // Enhanced quick replies renderer
   const renderQuickReplies = (quickReplies: string[]) => {
     if (!quickReplies || quickReplies.length === 0) return null;
 
@@ -537,7 +721,7 @@ const ChatbotWidget = () => {
           <button
             key={index}
             onClick={() => handleQuickReply(reply)}
-            className="px-2.5 py-1 bg-gray-100 hover:bg-purple-50 text-gray-700 hover:text-purple-700 text-xs rounded-full border border-gray-300 hover:border-purple-300 transition-all duration-200 hover:scale-105"
+            className="px-2.5 py-1 bg-gray-100 hover:bg-purple-50 text-gray-700 hover:text-purple-700 text-xs rounded-full border border-gray-300 hover:border-purple-300 transition-all duration-200 hover:scale-105 transform"
           >
             {reply}
           </button>
@@ -570,7 +754,7 @@ const ChatbotWidget = () => {
         {/* Enhanced Chat Toggle Button */}
         <button
           onClick={toggleChat}
-          className={`relative w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full shadow-2xl transition-all duration-500 hover:scale-110 overflow-hidden border-4 border-white ${
+          className={`relative w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full shadow-2xl transition-all duration-500 hover:scale-110 overflow-hidden border-4 border-white transform ${
             isOpen
               ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
               : "bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 hover:shadow-2xl hover:shadow-purple-500/25"
@@ -578,7 +762,7 @@ const ChatbotWidget = () => {
         >
           <div className="relative w-full h-full flex items-center justify-center">
             <X
-              className={`w-5 h-5 sm:w-6 sm:h-6 text-white absolute transition-all duration-500 ease-in-out ${
+              className={`w-5 h-5 sm:w-6 sm:h-6 text-white absolute transition-all duration-500 ease-in-out transform ${
                 isOpen
                   ? "opacity-100 rotate-0 scale-100"
                   : "opacity-0 rotate-90 scale-0"
@@ -588,7 +772,7 @@ const ChatbotWidget = () => {
             <img
               src="/images/chatbot-icon.png"
               alt="AI Assistant"
-              className={`w-full h-full object-cover absolute transition-all duration-500 ease-in-out ${
+              className={`w-full h-full object-cover absolute transition-all duration-500 ease-in-out transform ${
                 isOpen
                   ? "opacity-0 rotate-180 scale-0"
                   : "opacity-100 rotate-0 scale-100"
@@ -598,28 +782,29 @@ const ChatbotWidget = () => {
         </button>
       </div>
 
-      {/* Enhanced Responsive Chat Container */}
+      {/* Enhanced Chat Container with Proper Minimize/Maximize */}
       {isOpen && (
         <div
           className={`fixed flex flex-col bg-white rounded-2xl shadow-2xl border-2 border-purple-100 transition-all duration-300 backdrop-blur-lg pointer-events-auto ${
-            // Mobile: Full width with margins, proper height
-            "bottom-20 right-3 left-3 h-[450px] max-h-[calc(100vh-6rem)] " +
-            // Small mobile (480px+): Slightly better spacing
-            "xs:right-4 xs:left-4 xs:bottom-22 xs:h-[470px] " +
-            // Large mobile/Small tablet (640px+): Start transitioning to fixed width
-            "sm:left-auto sm:right-4 sm:w-[340px] sm:h-[480px] sm:bottom-24 " +
-            // Medium tablet (768px+): Comfortable tablet size
-            "md:w-[350px] md:h-[500px] md:right-6 md:bottom-26 " +
-            // Large tablet (1024px+): Reduce size for better desktop feel
-            "lg:w-[320px] lg:h-[460px] lg:right-8 lg:bottom-28 " +
-            // Laptop (1280px+): Optimized for laptop screens - smaller and more compact
-            "xl:w-[370px] xl:h-[460px] xl:right-10 xl:bottom-24 " +
-            // Desktop (1536px+): Slightly larger but still compact
-            "2xl:w-[320px] 2xl:h-[440px] 2xl:right-12 2xl:bottom-26 " +
-            // Ultra-wide (1920px+): Maximum size for very large screens
-            "3xl:w-[340px] 3xl:h-[460px] 3xl:right-16 3xl:bottom-28 " +
-            // Minimized state - responsive heights
-            (isMinimized ? "h-12 sm:h-14 md:h-16 lg:h-14 xl:h-12 2xl:h-14" : "")
+            // Base positioning and sizing
+            "bottom-20 right-3 left-3 " +
+            // Height based on minimize state
+            (isMinimized 
+              ? "h-16 " // Minimized height - just header
+              : "h-[450px] max-h-[calc(100vh-6rem)] " // Full height
+            ) +
+            // Responsive width adjustments
+            "xs:right-4 xs:left-4 xs:bottom-22 " +
+            "sm:left-auto sm:right-4 sm:w-[340px] sm:bottom-24 " +
+            (isMinimized ? "sm:h-16 " : "sm:h-[480px] ") +
+            "md:w-[350px] md:right-6 md:bottom-26 " +
+            (isMinimized ? "md:h-16 " : "md:h-[500px] ") +
+            "lg:w-[320px] lg:right-8 lg:bottom-28 " +
+            (isMinimized ? "lg:h-16 " : "lg:h-[460px] ") +
+            "xl:w-[370px] xl:right-10 xl:bottom-24 " +
+            (isMinimized ? "xl:h-16 " : "xl:h-[460px] ") +
+            "2xl:w-[320px] 2xl:right-12 2xl:bottom-26 " +
+            (isMinimized ? "2xl:h-16 " : "2xl:h-[440px] ")
           }`}
         >
           {" "}

@@ -9,7 +9,7 @@ import Link from "next/link";
 // Typewriter component for coding technologies
 const TechTypewriter: React.FC = () => {
   const [tech] = useTypewriter({
-    words: ["React.js", "Next.js", "FastAPI", "Flask", "Django"],
+    words: ["React.js", "Next.js", "FastAPI", "Django", "Typescript", "Python", "Sanity Headless CMS", "Strapi Headless CMS", "Contentful Headless CMS", "Stripe Payment Integration"],
     loop: 0,
     typeSpeed: 120,
     deleteSpeed: 80,
@@ -70,7 +70,7 @@ const Hero: React.FC = () => {
           </h2>
 
           <p className="text-lg text-slate-600 max-w-2xl mx-auto lg:mx-0">
-            I am a Full Stack Developer specializing in Next.js, API Development, and modern web technologies. Building elegant solutions to complex problems.
+            I am a Full Stack Developer specializing in Next.js, API Development, and modern web technologies. Currently learning ML & DL, and mastering n8n, Agentc AI, RAG System, and Vector DB for AI.
           </p>
 
           {/* Buttons */}
