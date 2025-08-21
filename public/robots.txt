@@ -1,0 +1,13 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /api/*
+
+# Host
+Host: https://myousaf-codes.vercel.app
+
+# Sitemaps
+Sitemap: https://myousaf-codes.vercel.app/sitemap.xml

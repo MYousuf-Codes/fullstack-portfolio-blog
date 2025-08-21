@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     "Welcome to MYousaf Codes — a portfolio and blog by a professional full-stack web developer. Explore expert insights on web development, programming tutorials, and projects built with Next.js, React, Tailwind CSS, and Sanity. Let's build the web, one line of code at a time.",
   verification: {
     google: "s9faGWURF6VDwYE3r0NexHCUTcie24oCK_9SY2ARfxM",
-  },
+  },  
   icons: {
     icon: [
       { rel: "icon", type: "image/x-icon", url: "/favicon.ico" },

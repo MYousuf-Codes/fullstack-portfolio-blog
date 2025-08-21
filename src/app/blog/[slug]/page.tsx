@@ -9,6 +9,7 @@ import { FaArrowLeft, FaCalendar, FaClock } from "react-icons/fa";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { PortableTextBlock } from "@portabletext/types";
 import { Metadata } from "next";
+import Script from "next/script";
 
 // Interfaces`
 interface Author {
@@ -185,36 +186,42 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  return {
-    title: post.metaTitle || post.title,
-    description:
-      post.metaDescription ||
-      post.excerpt ||
-      `Read ${post.title} by ${post.author?.name || "Unknown Author"}`,
-    keywords: post.keywords?.join(", "),
-    openGraph: {
-      title: post.title,
-      description: post.metaDescription,
-      type: "article",
-      publishedTime: post.publishedAt,
-      images: post.ogImage
-        ? [{ url: post.ogImage, width: 1200, height: 630, alt: post.title }]
-        : [],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.metaDescription,
-      images: post.ogImage ? [post.ogImage] : [],
-    },
-    alternates: post.canonicalUrl ? { canonical: post.canonicalUrl } : undefined,
-  };
+return {
+  title: post.metaTitle || post.title,
+  description:
+    post.metaDescription ||
+    post.excerpt ||
+    `Read ${post.title} by ${post.author?.name || "Unknown Author"}`,
+  keywords: post.keywords?.join(", "),
+  openGraph: {
+    title: post.title,
+    description: post.metaDescription || post.excerpt,
+    url: post.canonicalUrl || `https://myousaf-codes.vercel.app/blog/${params.slug}`,
+    type: "article",
+    publishedTime: post.publishedAt,
+    authors: post.author?.name ? [post.author.name] : undefined,
+    images: post.ogImage
+      ? [{ url: post.ogImage, width: 1200, height: 630, alt: post.title }]
+      : [],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: post.title,
+    description: post.metaDescription || post.excerpt,
+    images: post.ogImage ? [post.ogImage] : [],
+  },
+  alternates: {
+    canonical:
+      post.canonicalUrl || `https://myousaf-codes.vercel.app/blog/${params.slug}`,
+  },
+};
 }
 
 // Blog Post Page Component
 export default async function BlogPost({ params: { slug } }: Props) {
   const post = await getPost(slug);
 
+  
   if (!post) {
     return (
       <div className="min-h-screen pt-36 pb-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
@@ -235,6 +242,36 @@ export default async function BlogPost({ params: { slug } }: Props) {
     );
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description:
+      post.metaDescription ||
+      post.excerpt ||
+      `Read ${post.title} by ${post.author?.name || "Unknown Author"}`,
+    image: post.ogImage || "https://myousaf-codes.vercel.app/og-image.png",
+    author: {
+      "@type": "Person",
+      name: post.author?.name || "Muhammad Yousaf",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "MYousaf Codes",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://myousaf-codes.vercel.app/logo.png", // add in /public
+      },
+    },
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": post.canonicalUrl ||
+        `https://myousaf-codes.vercel.app/blog/${slug}`,
+    },
+  };
+
   return (
     <div className="min-h-screen pt-36 pb-24 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200">
       {/* Background Elements */}
@@ -252,8 +289,14 @@ export default async function BlogPost({ params: { slug } }: Props) {
           <FaArrowLeft className="text-sm group-hover:translate-x-[-2px] transition-transform" />
           <span>Back to blog</span>
         </Link>
+        {/* JSON-LD for SEO */}
+        <Script
+                id="ld-json-blog"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
 
-        {/* Header */}
+        {/* Main Blog Post */}
         <div className="mb-8">
           <div className="flex flex-wrap gap-2 mb-4">
             {post.categories.map((category) => (
