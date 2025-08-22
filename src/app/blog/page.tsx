@@ -9,7 +9,7 @@ import { Metadata } from "next";
 async function getFeaturedPostsForMetadata() {
   try {
     const featuredPosts = await client.fetch(`
-      *[_type == "post"] | order(publishedAt desc)[0...3] {
+      *[_type == "post"] | order(publishedAt desc) {
         title,
         mainImage
       }
