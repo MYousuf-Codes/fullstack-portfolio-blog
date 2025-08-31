@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import ProjectCard from "@/components/ProjectsCard";
+import ProjectsCard from "@/components/ProjectsCard";
 import { projects } from "@/data/projects";
 import { FaFilter, FaSearch, FaTimes } from "react-icons/fa";
 
@@ -17,7 +17,7 @@ const Projects = () => {
   }, []);
 
   // Get unique statuses
-  const statuses = ["all", "completed", "in progress", "planned"];
+  const statuses = ["all", "completed", "in-progress", "planned"];
 
   // Filter projects based on category, status, and search
   const filteredProjects = useMemo(() => {
@@ -31,7 +31,7 @@ const Projects = () => {
     // Filter by status
     if (statusFilter !== "all") {
       filtered = filtered.filter(
-        (project) => project.status.toLowerCase() === statusFilter.toLowerCase()
+        (project) => project.status === statusFilter
       );
     }
 
@@ -228,9 +228,10 @@ const Projects = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
+            className="w-full"
           >
             {filteredProjects.length > 0 ? (
-              <ProjectCard />
+              <ProjectsCard projects={filteredProjects} />
             ) : (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -242,8 +243,7 @@ const Projects = () => {
                   No projects found
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Try adjusting your search terms or filters to find what you're
-                  looking for.
+                  Try adjusting your search terms or filters to find what you're looking for.
                 </p>
                 <button
                   onClick={clearFilters}
