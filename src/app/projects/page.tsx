@@ -30,9 +30,7 @@ const Projects = () => {
 
     // Filter by status
     if (statusFilter !== "all") {
-      filtered = filtered.filter(
-        (project) => project.status === statusFilter
-      );
+      filtered = filtered.filter((project) => project.status === statusFilter);
     }
 
     // Filter by search query
@@ -94,10 +92,12 @@ const Projects = () => {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-5xl md:text-7xl font-bold text-slate-900 dark:text-white mb-6"
             >
-              My{" "}
-              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Projects
-              </span>
+              <p className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+                All{" "}
+                <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  Projects
+                </span>
+              </p>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -143,7 +143,9 @@ const Projects = () => {
                   </span>
                 </button>
 
-                {(filter !== "all" || statusFilter !== "all" || searchQuery) && (
+                {(filter !== "all" ||
+                  statusFilter !== "all" ||
+                  searchQuery) && (
                   <motion.button
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -243,7 +245,8 @@ const Projects = () => {
                   No projects found
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Try adjusting your search terms or filters to find what you're looking for.
+                  Try adjusting your search terms or filters to find what you're
+                  looking for.
                 </p>
                 <button
                   onClick={clearFilters}
